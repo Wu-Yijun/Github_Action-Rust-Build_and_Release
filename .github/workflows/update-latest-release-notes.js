@@ -20,9 +20,9 @@ async function updateReleaseNotes() {
   }
 
   // 获取最新的 release 信息
-  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
+  const octokit0 = new Octokit({auth: process.env.GITHUB_TOKEN});
   const latestRelease =
-      await octokit
+      await octokit0
           .request(
               `GET /repos/${owner}/${repo}/releases/latest`,
               {owner: owner, repo: repo})
@@ -38,6 +38,7 @@ async function updateReleaseNotes() {
   const releaseUrl = latestRelease.html_url;
 
   // 更新 release 的正文内容
+  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
   await octokit
       .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
         owner: owner,
