@@ -24,7 +24,7 @@ jobs:
       id: get_counter
       run: |
         counter=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name' | cut -d '.' -f 3)
-        echo "::set-output name=counter::$((counter + 1))"
+        echo "::set-output name=counter::$((counter + 2))"
 
     # Build the project
     - name: Build Project
