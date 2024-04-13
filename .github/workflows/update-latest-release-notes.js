@@ -6,11 +6,16 @@ async function updateReleaseNotes() {
 
   // Octokit.js
   // https://github.com/octokit/core.js#readme
-  const fs = require("fs").promises;
-  const { Octokit } = await import("@octokit/core");
+  const fs = require('fs').promises;
+  const {Octokit} = await import('@octokit/core');
 
   const octokit = new Octokit({auth: token});
-  const content = await fs.readFile(path, 'utf8');
+  let content = '### ' + release_info + '\n\n';
+  try {
+    content += await fs.readFile(path, 'utf8');
+  } catch (error) {
+    console.error('Error reading file:', error);
+  }
 
   await octokit.request(
       `PATCH /repos/${owner}/${repo}/releases/${release_id}`, {
@@ -19,7 +24,7 @@ async function updateReleaseNotes() {
         release_id: release_id,
         tag_name: tag_name,
         target_commitish: 'master',
-        body: '### ' + release_info + '\n\n' + content,
+        body:  + content,
         draft: false,
         prerelease: false,
         headers: {'X-GitHub-Api-Version': '2022-11-28'}
