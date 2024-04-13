@@ -33,6 +33,6 @@ try {
 } catch (error) {
   console.error('Error reading commit_diff_temp.md:', error);
 }
-content.replaceAll('\'', '\\\'');
+content = content.replaceAll('\'', '\\\'');
 console.log(`::set-output name=content::${JSON.stringify(content)}`);
 // console.log(`::set-output name=content::'${content}'`);
