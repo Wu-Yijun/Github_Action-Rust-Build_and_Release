@@ -16,35 +16,38 @@ name: Test Release
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - uses: actions/checkout@v2
-    # Get the commit count
-    - name: Get commit count
-      id: commit_count
+
+    # Get the current counter value from the latest release
+    - name: Get current counter
+      id: get_counter
       run: |
-        commit_count=$(git rev-list --count HEAD)
-        echo "Commit count is $commit_count"
-        echo "::set-env name=COMMIT_COUNT::$commit_count"
+        counter=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name' | cut -d '.' -f 3)
+        echo "::set-output name=counter::$((counter + 1))"
+
+    # Build the project
     - name: Build Project
       run: cargo build --verbose --release
-    # list the files in the target/release directory
+
+    # List the files in the target/release directory
     - name: List Files
       run: ls -R ./target/release
-    # then release to github release
-    - name: Create Release
+
+    # Release to github release
+    - name: Create release
       id: create_release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: "1.1.${{ env.COMMIT_COUNT }}"
-        release_name: Release ${{ env.COMMIT_COUNT }}
+        tag_name: "v1.2.${{ steps.get_counter.outputs.counter }}"
+        release_name: Release 1.2.${{ steps.get_counter.outputs.counter }}
         body: |
-          This is the release created for commit count ${{ env.COMMIT_COUNT }}
+          This is release 1.2.${{ steps.get_counter.outputs.counter }}.
         draft: false
         prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     # copy and compress the binary and library into a zip file
     - name: Copy and Compress Binary
       run: |
@@ -58,6 +61,7 @@ jobs:
         rm -rf temp_files
         cd ..
         cd ..
+
     # then upload the zip to the release
     - name: Upload Release Asset
       id: upload-release-asset
