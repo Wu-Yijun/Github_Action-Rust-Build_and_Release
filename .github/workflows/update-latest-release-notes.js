@@ -37,23 +37,27 @@ async function updateReleaseNotes() {
   const releaseBody = latestRelease.body;
   const releaseUrl = latestRelease.html_url;
 
-  console.error(token.length, token);
+  console.error(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
+    owner: owner,
+    repo: repo,
+    release_id: '' + releaseId,
+    body: 'test',
+  });
   const octokit = new Octokit({token: token});
-  auth:
-      // 更新 release 的正文内容
-      await octokit
-          .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
-            owner: owner,
-            repo: repo,
-            release_id: '' + releaseId,
-            body: 'test',
-          })
-          .then(response => {
-            console.log('Release body updated:', response.status);
-          })
-          .catch(error => {
-            console.error('Error updating release body:', error);
-          });
+  // 更新 release 的正文内容
+  await octokit
+      .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
+        owner: owner,
+        repo: repo,
+        release_id: '' + releaseId,
+        body: 'test',
+      })
+      .then(response => {
+        console.log('Release body updated:', response.status);
+      })
+      .catch(error => {
+        console.error('Error updating release body:', error);
+      });
 }
 
 updateReleaseNotes().catch(console.error);

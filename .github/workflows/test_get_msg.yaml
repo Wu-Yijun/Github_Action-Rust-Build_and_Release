@@ -39,7 +39,18 @@ jobs:
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           echo "::set-output name=commit_message::$COMMIT_MESSAGE"
-      
+      # - name: Update Release Body
+      #   run: |
+      #     RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
+      #     COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
+      #     CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.content }}"
+      #     FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
+      #     curl -L \
+      #       -X PATCH \
+      #       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Accept: application/vnd.github.v3+json" \
+      #       $RELEASE_URL \
+      #       -d "{\"body\": \"$FINAL_MESSAGE\"}"
       - name: Setup Node.js
         uses: actions/setup-node@v2
       - name: Update Release Body
