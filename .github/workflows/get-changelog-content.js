@@ -1,3 +1,59 @@
+function convert_diff(diff) {
+  return diff;
+  const lines = diff.split('\n');
+  let result = '';
+  let state = 'none';
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    if (line.startsWith('diff --git')) {
+      // 如果state为none, 则表示当前是第一个diff, 不需要输出 ``` \n\n
+      // 如果state不为none, 则表示当前是一个diff的结束, 需要输出 ``` \n\n
+      // 我们希望格式为: 输入: diff --git a/xxx b/xxx
+      // 输出: ### xxx \n ```bash \n diff --git a/xxx b/xxx \n ``` \n \n ```diff
+      // 进入diff状态
+      if (state !== 'none') {
+        result += '```\n\n';
+      }
+      result += `### ${line.split(' ')[2]}\n\`\`\`bash\n${
+          line}\n\`\`\`\n\n\`\`\`diff\n`;
+      state = 'diff';
+      continue;
+    }
+    if (state === 'diff' &&
+        (line.startsWith('index ') || line.startsWith('--- ') ||
+         line.startsWith('+++ '))) {
+      // 如果当前状态为diff, 且当前行以index, ---, +++开头, 则表示这是diff开头,
+      // 直接输出加换行
+      result += `${line}\n`;
+      continue;
+    }
+    if (line.startsWith('@@ ')) {
+      // 如果当前行以@@开头, 则表示这是一个定位行, 直接输出加换行
+      // 进入正文状态
+      result += `${line}\n`;
+      state = 'content';
+      continue;
+    }
+    // 正文一共4种状态, +, -, 空格, ~开头
+    if (line.startsWith(' ')) {
+      // 如果当前行以空格开头, 则表示这是正常行,
+      // 需要判断它的下一行是什么状态, 如果是~开头, 则表示这是正常行的结束
+      // 我们在正常行首加上 * , 表示正常行
+      // 如果是+或-, 则表示这是一个发生变化的行, 需要在行首加上一个换行,
+      // 与正常行分开
+      //
+      result += `${line}\n`;
+      continue;
+    }
+    if (line.startsWith('-')) {
+      result += `<font color="red">${line}</font>\n`;
+      continue;
+    }
+    result += `${line}\n`;
+  }
+  return result;
+}
+
 const {execSync} = require('child_process');
 
 let content = '';
@@ -29,7 +85,7 @@ content += '\n\n## *Diff*:\n\n```Diff\n';
 const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
 try {
   const COMMIT_DIFF_CONTENT = fs.readFileSync(COMMIT_DIFF_FILE, 'utf8');
-  content = content + COMMIT_DIFF_CONTENT;
+  content = content + convert_diff(COMMIT_DIFF_CONTENT);
 } catch (error) {
   console.error('Error reading commit_diff_temp.md:', error);
 }
