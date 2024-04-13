@@ -8,21 +8,19 @@ on:
 jobs:
   read-file:
     runs-on: ubuntu-latest
-    outputs:
-      file_content: ${{ steps.read_file.outputs.file_content }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Read File
+      - name: Read file
         id: read_file
-        run: |
-          FILE_CONTENT=$(cat CHANGELOG.md)
-          echo "::set-output name=file_content::$FILE_CONTENT"
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./CHANGELOG.md
 
       - name: Print File Content
         run: |
-          echo "File Content: ${{ steps.read_file.outputs.file_content }}"
+          echo "File Content: ${{ steps.read_file.outputs.content }}"
 
 # jobs:
 #   get_counter_and_release:
