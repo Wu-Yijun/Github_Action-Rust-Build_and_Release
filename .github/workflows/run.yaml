@@ -1,0 +1,32 @@
+# 手动运行
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Name of the person to greet'
+        required: true
+        default: 'Mona the Octocat'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Greet someone
+      run: cargo build --verbose --release
+
+    # then release to github release
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Release
+        draft: false
+        prerelease: false
