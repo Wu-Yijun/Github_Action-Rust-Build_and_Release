@@ -42,6 +42,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/release/Github_Action-Rust-Build_and_Release
-        asset_name: Github_Action-Rust-Build_and_Release
+        asset_path: ./target/release/github_action-rust-build_and_release
+        asset_name: github_action-rust-build_and_release
         asset_content_type: application/octet-stream
