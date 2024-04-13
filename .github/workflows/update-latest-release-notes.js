@@ -7,7 +7,7 @@ async function updateReleaseNotes() {
 
   // 获取传递的参数
   const args = process.argv.slice(2);
-  const [release_info, token] = args;
+  const [token, release_info] = args;
   const repoFullName = process.env.GITHUB_REPOSITORY;
   const [owner, repo] = repoFullName.split('/');
   const path = './CHANGELOG.md';
