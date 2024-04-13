@@ -15,6 +15,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    # Get the commit count
+    - name: Get commit count
+      id: commit_count
+      run: |
+        commit_count=$(git rev-list --count HEAD)
+        echo "Commit count is $commit_count"
+        echo "::set-env name=COMMIT_COUNT::$commit_count"
     - name: Build Project
       run: cargo build --verbose --release
     # list the files in the target/release directory
@@ -27,11 +34,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 1.0.7
-        release_name: Release ${{ github.ref }}
+        tag_name: "1.1.${{ env.COMMIT_COUNT }}"
+        release_name: Release ${{ env.COMMIT_COUNT }}
         body: |
-          Changes in this Release
-          - First Release
+          This is the release created for commit count ${{ env.COMMIT_COUNT }}
         draft: false
         prerelease: false
     # copy and compress the binary and library into a zip file
