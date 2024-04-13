@@ -43,7 +43,7 @@ async function updateReleaseNotes() {
         owner: owner,
         repo: repo,
         release_id: releaseId,
-        body: releaseBody + '\n\nUpdated body content'
+        body: content,
       })
       .then(response => {
         console.log('Release body updated:', response.status);
