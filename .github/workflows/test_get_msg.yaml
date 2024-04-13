@@ -37,12 +37,6 @@ jobs:
           CHANGELOG_CONTENT=$(sed -z 's/\n/\\n/g' CHANGELOG.md)
           echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
       
-      - name: Get Changelog Content
-        id: get_changelog_content
-        run: |
-          CHANGELOG_CONTENT=$(cat CHANGELOG.md | jq -s -R 'split("\n")' | jq -s -R 'join("\\n")')
-          echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
-
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
