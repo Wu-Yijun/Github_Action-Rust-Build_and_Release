@@ -9,7 +9,6 @@ async function updateReleaseNotes() {
   const args = process.argv.slice(2);
   const [release_info, token] = args;
   const repoFullName = process.env.GITHUB_REPOSITORY;
-  console.error(process.env);
   const [owner, repo] = repoFullName.split('/');
   const path = './CHANGELOG.md';
 
@@ -21,9 +20,9 @@ async function updateReleaseNotes() {
   }
 
   // 获取最新的 release 信息
-  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
+  const octokit0 = new Octokit();
   const latestRelease =
-      await octokit
+      await octokit0
           .request(
               `GET /repos/${owner}/${repo}/releases/latest`,
               {owner: owner, repo: repo})
@@ -38,20 +37,22 @@ async function updateReleaseNotes() {
   const releaseBody = latestRelease.body;
   const releaseUrl = latestRelease.html_url;
 
-  // 更新 release 的正文内容
-  await octokit
-      .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
-        owner: owner,
-        repo: repo,
-        release_id: "" + releaseId,
-        body: "test",
-      })
-      .then(response => {
-        console.log('Release body updated:', response.status);
-      })
-      .catch(error => {
-        console.error('Error updating release body:', error);
-      });
+  const octokit = new Octokit({token: tokentoken});
+  auth:
+      // 更新 release 的正文内容
+      await octokit
+          .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
+            owner: owner,
+            repo: repo,
+            release_id: '' + releaseId,
+            body: 'test',
+          })
+          .then(response => {
+            console.log('Release body updated:', response.status);
+          })
+          .catch(error => {
+            console.error('Error updating release body:', error);
+          });
 }
 
 updateReleaseNotes().catch(console.error);
