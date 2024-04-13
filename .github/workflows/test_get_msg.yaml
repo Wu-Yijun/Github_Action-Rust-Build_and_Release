@@ -33,30 +33,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Get Commit Message
-        id: get_commit_message
-        run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          echo "::set-output name=commit_message::$COMMIT_MESSAGE"
-      
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v2
       
       - name: Get Changelog Content
         id: get_changelog_content
         run: node ./.github/workflows/get-changelog-content.js
-          # const fs = require('fs');
-          # const CHANGELOG_FILE = 'CHANGELOG.md';
-          # const CHANGELOG_CONTENT = fs.readFileSync(CHANGELOG_FILE, 'utf8');
-          # console.log(`::set-output name=content::${JSON.stringify(CHANGELOG_CONTENT)}`);
         
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
-          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
-          CHANGELOG_CONTENT=${{ steps.get_changelog_content.outputs.content }}
-          FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
+          FINAL_MESSAGE=${{ steps.get_changelog_content.outputs.content }}
           curl -L \
             -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -64,13 +49,3 @@ jobs:
             $RELEASE_URL \
             -d "{\"body\": \"$FINAL_MESSAGE\"}"
 
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v2
-      # - name: Update Release Body
-      #   run: |
-      #     npm install @octokit/core
-      #     token="${{ secrets.GITHUB_TOKEN }}"
-      #     release_info="${{ steps.get_commit_message.outputs.commit_message }}"
-      #     node ./.github/workflows/update-latest-release-notes.js $token $release_info
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
