@@ -16,20 +16,20 @@ jobs:
     - name: Build Project
       run: cargo build --verbose --release
 
-    # # then release to github release
-    # - name: Create Release
-    #   id: create_release
-    #   uses: actions/create-release@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     tag_name: v1.0.0
-    #     release_name: Release ${{ github.ref }}
-    #     body: |
-    #       Changes in this Release
-    #       - First Release
-    #     draft: false
-    #     prerelease: false
+    # then release to github release
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.1
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Release
+        draft: false
+        prerelease: false
     # then add the binary to the release
     - name: Upload Release Asset
       id: upload-release-asset
@@ -38,6 +38,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/release/hello_world
-        asset_name: hello_world
+        asset_path: ./target/release/
+        asset_name: Github_Action-Rust-Build_and_Release.exe
         asset_content_type: application/octet-stream
