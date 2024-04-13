@@ -52,8 +52,17 @@ jobs:
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.upload_url }}
-          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
-          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          NEW_BODY="Your new release body content here"
+          curl -L\
+            -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             $RELEASE_URL \
-            -d "{\"body\": \"$COMMIT_MESSAGE\"}"
+            -d "{\"body\": \"$NEW_BODY\"}"
+    #   - name: Update Release Body
+    #     run: |
+    #       RELEASE_URL=${{ needs.get_counter_and_release.outputs.upload_url }}
+    #       COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
+    #       curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+    #         -H "Accept: application/vnd.github.v3+json" \
+    #         $RELEASE_URL \
+    #         -d "{\"body\": \"$COMMIT_MESSAGE\"}"
