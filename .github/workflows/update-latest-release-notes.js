@@ -1,15 +1,15 @@
 
 async function updateReleaseNotes() {
   // 获取传递的参数
-  const args = process.argv.slice(6);
-  const [token, owner, repo, release_id, tag_name, release_info] = args;
+  const args = process.argv.slice(2);
+  const [owner, repo, release_id, tag_name, release_info] = args;
 
   // Octokit.js
   // https://github.com/octokit/core.js#readme
   const fs = require('fs').promises;
   const {Octokit} = await import('@octokit/core');
 
-  const octokit = new Octokit({auth: token});
+  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
   let content = '### ' + release_info + '\n\n';
   try {
     content += await fs.readFile(path, 'utf8');

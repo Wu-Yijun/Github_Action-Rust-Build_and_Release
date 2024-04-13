@@ -64,10 +64,9 @@ jobs:
       - name: Update Release Body
         run: |
           npm install @octokit/core
-          token="${{ secrets.GITHUB_TOKEN }}"
           owner="${{ github.repository_owner }}"
           repo="${{ github.event.repository.name }}"
           release_id="${{ needs.get_counter_and_release.outputs.release_id }}"
           tag_name="${{ needs.get_counter_and_release.outputs.release_tag }}"
           release_info="${{ steps.get_commit_message.outputs.commit_message }}"
-          node ./.github/workflows/update-latest-release-notes.js $token $owner $repo $release_id $tag_name $release_info
+          node ./.github/workflows/update-latest-release-notes.js $owner $repo $release_id $tag_name $release_info
