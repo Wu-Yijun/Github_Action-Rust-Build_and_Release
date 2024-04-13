@@ -24,7 +24,7 @@ async function updateReleaseNotes() {
         release_id: release_id,
         tag_name: tag_name,
         target_commitish: 'master',
-        body:  + content,
+        body: content,
         draft: false,
         prerelease: false,
         headers: {'X-GitHub-Api-Version': '2022-11-28'}
