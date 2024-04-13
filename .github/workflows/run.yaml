@@ -27,16 +27,26 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 1.0.5
+        tag_name: 1.0.6
         release_name: Release ${{ github.ref }}
         body: |
           Changes in this Release
           - First Release
         draft: false
         prerelease: false
-    # compress the binary and library into a zip file
-    - name: Compress Binary
-      run: zip -j ./target/release/hello-ubuntu.zip ./target/release/hello-world
+    # copy and compress the binary and library into a zip file
+    - name: Copy and Compress Binary
+      run: 
+        cd ./target/release
+        mkdir -p temp_files
+        cp hello-world temp_files/
+        cp *.so temp_files/libs/
+        cd temp_files
+        zip -r ../hello-ubuntu.zip .
+        cd ..
+        rm -rf temp_files
+        cd ..
+        cd ..
     # then upload the zip to the release
     - name: Upload Release Asset
       id: upload-release-asset
