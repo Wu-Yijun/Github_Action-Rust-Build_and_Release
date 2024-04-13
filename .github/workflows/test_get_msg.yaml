@@ -38,7 +38,7 @@ jobs:
         id: diff
         run: |
           git fetch --prune --unshallow
-          git diff --word-diff-regex='(<span style="color:red;">.*?</span>|<span style="color:green;">.*?</span>|.)' ${{ github.event.before }} ${{ github.sha }} > commit_diff_temp.md
+          git diff --word-diff=color ${{ github.event.before }} ${{ github.sha }} > commit_diff_temp.md
 
       - name: Get Changelog Content
         id: get_changelog_content
