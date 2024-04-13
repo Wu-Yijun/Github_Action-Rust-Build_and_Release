@@ -185,7 +185,7 @@ jobs:
           asset_content_type: application/zip
 
   # Check if all the jobs are successful
-  job_E:
+  check_success:
     needs: [build_on_ubunutu, build_on_windows, build_on_mac]
     runs-on: ubuntu-latest
     steps:
