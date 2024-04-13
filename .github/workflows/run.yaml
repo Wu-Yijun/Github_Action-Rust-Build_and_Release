@@ -6,6 +6,9 @@ on:
         description: 'Name of the person to greet'
         required: true
         default: 'Mona the Octocat'
+  push:
+    branches:
+      - main
 
 name: Test Release
 
