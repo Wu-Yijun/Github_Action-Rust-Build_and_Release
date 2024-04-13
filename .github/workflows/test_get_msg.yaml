@@ -40,7 +40,7 @@ jobs:
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
-          NEW_BODY="Your new release body content here"
+          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
           curl -L \
             -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
