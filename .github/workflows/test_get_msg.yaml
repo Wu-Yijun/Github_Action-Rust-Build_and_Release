@@ -34,6 +34,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
+      - name: Generate diff
+        id: diff
+        run: |
+          git fetch --prune --unshallow
+          git diff --name-status ${{ github.event.before }} ${{ github.sha }} > commit_diff_temp.md
+
       - name: Get Changelog Content
         id: get_changelog_content
         run: node ./.github/workflows/get-changelog-content.js
