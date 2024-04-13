@@ -19,27 +19,41 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Get the current counter value from the latest release
-    - name: Get current counter
-      id: get_counter
-      run: |
-        counter=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name' | cut -d '.' -f 3)
-        echo "::set-output name=counter::$((counter + 2))"
+    # # Get the current counter value from the latest release
+    # - name: Get current counter
+    #   id: get_counter
+    #   run: |
+    #     counter=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name' | cut -d '.' -f 3)
+    #     echo "::set-output name=counter::$((counter + 2))"
 
     # Build the project
     - name: Build Project
       run: cargo build --verbose --release
 
-    # List the files in the target/release directory
-    - name: List Files
-      run: ls -R ./target/release
+    # # List the files in the target/release directory
+    # - name: List Files
+    #   run: ls -R ./target/release
 
+    # copy and compress the binary and library into a zip file
+    - name: Copy and Compress Binary
+      run: |
+        cd ./target/release
+        mkdir -p temp_files/libs
+        cp hello-world.exe temp_files/
+        cp *.lib temp_files/libs/
+        cd temp_files
+        zip -r ../hello-ubuntu.zip .
+        cd ..
+        rm -rf temp_files
+        cd ..
+        cd ..
+    
     # Release to github release
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
       with:
-        tag_name: "v1.2.${{ steps.get_counter.outputs.counter }}"
+        tag_name: "v1.x.${{ steps.get_counter.outputs.counter }}"
         release_name: Release 1.2.${{ steps.get_counter.outputs.counter }}
         body: |
           This is release 1.2.${{ steps.get_counter.outputs.counter }}.
@@ -47,20 +61,6 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # copy and compress the binary and library into a zip file
-    - name: Copy and Compress Binary
-      run: |
-        cd ./target/release
-        mkdir -p temp_files/libs
-        cp hello-world temp_files/
-        cp *.so temp_files/libs/
-        cd temp_files
-        zip -r ../hello-ubuntu.zip .
-        cd ..
-        rm -rf temp_files
-        cd ..
-        cd ..
 
     # then upload the zip to the release
     - name: Upload Release Asset
