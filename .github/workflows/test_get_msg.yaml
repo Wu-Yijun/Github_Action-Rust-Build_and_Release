@@ -40,13 +40,17 @@ jobs:
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           echo "::set-output name=commit_message::$COMMIT_MESSAGE"
       
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+      
       - name: Get Changelog Content
         id: get_changelog_content
         run: |
           const fs = require('fs');
           const CHANGELOG_FILE = 'CHANGELOG.md';
           const CHANGELOG_CONTENT = fs.readFileSync(CHANGELOG_FILE, 'utf8');
-          console.log(`::set-output name=content::${CHANGELOG_CONTENT}`);
+          console.log(`::set-output name=content::${JSON.stringify(CHANGELOG_CONTENT)}`);
+        
         
       - name: Update Release Body
         run: |
@@ -60,7 +64,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             $RELEASE_URL \
             -d "{\"body\": \"$FINAL_MESSAGE\"}"
-            
+
       # - name: Setup Node.js
       #   uses: actions/setup-node@v2
       # - name: Update Release Body
