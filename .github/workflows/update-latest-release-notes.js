@@ -1,16 +1,17 @@
 
 async function updateReleaseNotes() {
-  // 获取传递的参数
-  const args = process.argv.slice(2);
-  const [owner, repo, release_id, tag_name, release_info] = args;
-  const path = './CHANGELOG.md';
-
   // Octokit.js
   // https://github.com/octokit/core.js#readme
   const fs = require('fs').promises;
   const {Octokit} = await import('@octokit/core');
 
-  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
+  // 获取传递的参数
+  const args = process.argv.slice(2);
+  const [release_info] = args;
+  const repoFullName = process.env.GITHUB_REPOSITORY;
+  const [owner, repo] = repoFullName.split('/');
+  const path = './CHANGELOG.md';
+
   let content = '### ' + release_info + '\n\n';
   try {
     content += await fs.readFile(path, 'utf8');
@@ -18,17 +19,31 @@ async function updateReleaseNotes() {
     console.error('Error reading file:', error);
   }
 
+  // 获取最新的 release 信息
+  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
+  const latestRelease =
+      await octokit
+          .request(
+              `GET /repos/${owner}/${repo}/releases/latest`,
+              {owner: owner, repo: repo})
+          .then(response => {
+            return response.data;
+          })
+          .catch(error => {
+            console.error('Error getting latest release:', error);
+          });
+
+  const releaseId = latestRelease.id;
+  const releaseBody = latestRelease.body;
+  const releaseUrl = latestRelease.html_url;
+
+  // 更新 release 的正文内容
   await octokit
-      .request(`PATCH /repos/${owner}/${repo}/releases/${release_id}`, {
-        owner: owner,
-        repo: repo,
-        release_id: release_id,
-        // tag_name: tag_name,
-        // target_commitish: 'master',
-        body: content,
-        // draft: false,
-        // prerelease: false,
-        // headers: {'X-GitHub-Api-Version': '2022-11-28'}
+      .request(`PATCH ${releaseUrl}`, {
+        owner: 'owner',
+        repo: 'repo',
+        release_id: releaseId,
+        body: releaseBody + '\n\nUpdated body content'
       })
       .then(response => {
         console.log('Release body updated:', response.status);
