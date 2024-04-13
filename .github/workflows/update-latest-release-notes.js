@@ -3,6 +3,7 @@ async function updateReleaseNotes() {
   // 获取传递的参数
   const args = process.argv.slice(2);
   const [owner, repo, release_id, tag_name, release_info] = args;
+  const path = './CHANGELOG.md';
 
   // Octokit.js
   // https://github.com/octokit/core.js#readme
