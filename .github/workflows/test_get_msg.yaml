@@ -55,7 +55,7 @@ jobs:
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
           COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
-          CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.content }}"
+          CHANGELOG_CONTENT=${{ steps.get_changelog_content.outputs.content }}
           FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
           curl -L \
             -X PATCH \
