@@ -53,8 +53,9 @@ jobs:
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.upload_url }}
           NEW_BODY="Your new release body content here"
-          curl -L\
-            -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          curl -L \
+            -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             $RELEASE_URL \
             -d "{\"body\": \"$NEW_BODY\"}"
