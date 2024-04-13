@@ -38,7 +38,7 @@ jobs:
     - name: Copy and Compress Binary
       run: |
         cd ./target/release
-        mkdir -p temp_files
+        mkdir -p temp_files/libs
         cp hello-world temp_files/
         cp *.so temp_files/libs/
         cd temp_files
