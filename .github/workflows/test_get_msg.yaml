@@ -17,7 +17,7 @@ jobs:
       - name: Read File
         id: read_file
         run: |
-          FILE_CONTENT=$(cat path/to/your/file)
+          FILE_CONTENT=$(cat CHANGELOG.md)
           echo "::set-output name=file_content::$FILE_CONTENT"
 
       - name: Print File Content
