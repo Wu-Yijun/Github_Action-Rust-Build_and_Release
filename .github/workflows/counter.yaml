@@ -28,8 +28,10 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: "v1.2.${{ steps.get_counter.outputs.counter }}"
-          release_name: Release ${{ steps.get_counter.outputs.counter }}
+          release_name: Release 1.2.${{ steps.get_counter.outputs.counter }}
           body: |
-            This is release ${{ steps.get_counter.outputs.counter }}.
+            This is release 1.2.${{ steps.get_counter.outputs.counter }}.
+          draft: true
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
