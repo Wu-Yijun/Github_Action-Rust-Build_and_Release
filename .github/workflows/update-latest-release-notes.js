@@ -7,7 +7,7 @@ async function updateReleaseNotes() {
 
   // 获取传递的参数
   const args = process.argv.slice(2);
-  const [release_info] = args;
+  const [release_info, token] = args;
   const repoFullName = process.env.GITHUB_REPOSITORY;
   const [owner, repo] = repoFullName.split('/');
   const path = './CHANGELOG.md';
@@ -20,9 +20,9 @@ async function updateReleaseNotes() {
   }
 
   // 获取最新的 release 信息
-  const octokit0 = new Octokit({auth: process.env.GITHUB_TOKEN});
+  const octokit = new Octokit({auth: token});
   const latestRelease =
-      await octokit0
+      await octokit
           .request(
               `GET /repos/${owner}/${repo}/releases/latest`,
               {owner: owner, repo: repo})
@@ -38,7 +38,6 @@ async function updateReleaseNotes() {
   const releaseUrl = latestRelease.html_url;
 
   // 更新 release 的正文内容
-  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
   await octokit
       .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
         owner: owner,

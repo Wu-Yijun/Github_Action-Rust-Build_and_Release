@@ -46,4 +46,5 @@ jobs:
         run: |
           npm install @octokit/core
           release_info="${{ steps.get_commit_message.outputs.commit_message }}"
-          node ./.github/workflows/update-latest-release-notes.js $release_info
+          token="${{ secrets.GITHUB_TOKEN }}"
+          node ./.github/workflows/update-latest-release-notes.js $release_info $token
