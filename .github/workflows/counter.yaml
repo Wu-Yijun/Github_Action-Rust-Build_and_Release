@@ -15,6 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Debug
+        run: |
+          release_info=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          echo "Release info: $release_info"
+          counter=$(echo "$release_info" | jq -r '.tag_name' | cut -d '.' -f 3)
+          echo "Counter: $counter"
+
       # Get the current counter value from the latest release
       - name: Get current counter
         id: get_counter
