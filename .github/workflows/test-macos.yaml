@@ -9,9 +9,9 @@ on:
   push:
     branches:
       - master
-
+  
 name: Build and Release
-
+  
 jobs:
   get_counter_and_release:
     runs-on: ubuntu-latest
@@ -41,73 +41,6 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build_on_ubunutu:
-    needs: get_counter_and_release
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    # Build the project
-    - name: Build Project
-      run: cargo build --verbose --release
-    # List the files in the target/release directory
-    - name: List Files
-      run: ls -R ./target/release
-    # copy and compress the binary and library into a zip file
-    - name: Copy and Compress Binary
-      run: |
-        cd ./target/release
-        mkdir -p temp_files/libs
-        cp hello-world temp_files/
-        cp *.so temp_files/libs/
-        cd temp_files
-        zip -r ../hello-ubuntu.zip .
-        cd ..
-        rm -rf temp_files
-        cd ..
-        cd ..
-    # then upload the zip to the release
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.get_counter_and_release.outputs.upload_url }}
-        asset_path: ./target/release/hello-ubuntu.zip
-        asset_name: hello-ubuntu.zip
-        asset_content_type: application/zip
-
-  build_on_windows:
-    needs: get_counter_and_release
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    # Build the project
-    - name: Build Project
-      run: cargo build --verbose --release
-    # copy and compress the binary and library into a zip file
-    - name: Copy and Compress Binary
-      run: |
-        cd ./target/release
-        mkdir -p hello_windows/libs
-        cp hello-world.exe hello_windows/
-        cp *.dll hello_windows/libs/
-        Compress-Archive -Path "hello_windows" hello-windows.zip
-        Remove-Item -Path "hello_windows" -Recurse -Force
-        cd ..
-        cd ..
-    # then upload the zip to the release
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.get_counter_and_release.outputs.upload_url }}
-        asset_path: ./target/release/hello-windows.zip
-        asset_name: hello-windows.zip
-        asset_content_type: application/zip
 
   build_on_mac:
     needs: get_counter_and_release
@@ -143,3 +76,4 @@ jobs:
           asset_path: ./target/release/hello-macos.zip
           asset_name: hello-macos.zip
           asset_content_type: application/zip
+          
