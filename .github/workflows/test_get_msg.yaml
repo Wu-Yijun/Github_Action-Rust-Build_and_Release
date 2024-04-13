@@ -47,7 +47,7 @@ jobs:
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
-          FINAL_MESSAGE=${{ steps.get_changelog_content.outputs.content }}
+          FINAL_MESSAGE='${{ steps.get_changelog_content.outputs.content }}'
           curl -L \
             -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
