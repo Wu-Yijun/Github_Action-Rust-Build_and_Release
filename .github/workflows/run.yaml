@@ -63,9 +63,22 @@ jobs:
         cd temp_files
         zip -r ../hello-ubuntu.zip .
         cd ..
-        rm -rf temp_files
         cd ..
         cd ..
+    # Run the Rust program
+    - name: Run Rust program
+      run: ./target/release/temp_files/hello-world
+      working-directory: ./target/release/temp_files
+      continue-on-error: true
+    # Check exit code
+    - name: Check exit code
+      run: |
+        echo "Exit code: $?"
+      if: ${{ failure() }}
+    # delete the temp_files directory
+    - name: Delete temp_files
+      run: |
+        rm -rf ./target/release/temp_files
     # then upload the zip to the release
     - name: Upload Release Asset
       id: upload-release-asset
@@ -94,9 +107,22 @@ jobs:
         cp hello-world.exe hello_windows/
         cp *.dll hello_windows/libs/
         Compress-Archive -Path "hello_windows" hello-windows.zip
-        Remove-Item -Path "hello_windows" -Recurse -Force
         cd ..
         cd ..
+    # Run the Rust program
+    - name: Run Rust program
+      run: ./target/release/hello_windows/hello-world.exe
+      working-directory: ./target/release
+      continue-on-error: true
+    # Check exit code
+    - name: Check exit code
+      run: |
+        echo "Exit code: $?"
+      if: ${{ failure() }}
+    # delete the hello_windows directory
+    - name: Delete hello_windows
+      run: |
+        Remove-Item -Path "./target/release/hello_windows" -Recurse -Force
     # then upload the zip to the release
     - name: Upload Release Asset
       id: upload-release-asset
@@ -130,8 +156,22 @@ jobs:
           cd temp_files
           zip -r ../hello-macos.zip .
           cd ..
-          rm -rf temp_files
           cd ..
+          cd ..
+      # Run the Rust program
+      - name: Run Rust program
+        run: ./target/release/temp_files/hello-world
+        working-directory: ./target/release/temp_files
+        continue-on-error: true
+      # Check exit code
+      - name: Check exit code
+        run: |
+          echo "Exit code: $?"
+        if: ${{ failure() }}
+      # delete the temp_files directory
+      - name: Delete temp_files
+        run: |
+          rm -rf ./target/release/temp_files
       # then upload the zip to the release
       - name: Upload Release Asset
         id: upload-release-asset
