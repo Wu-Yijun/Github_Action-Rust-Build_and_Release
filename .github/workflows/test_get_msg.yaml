@@ -8,10 +8,12 @@ on:
 jobs:
   get_counter_and_release:
     runs-on: ubuntu-latest
-    outputs:
-      release_id: ${{ steps.get_release_id.outputs.release_id }}
-      release_url: ${{ steps.get_release_id.outputs.release_url }}
+    # outputs:
+    #   release_id: ${{ steps.get_release_id.outputs.release_id }}
+    #   release_url: ${{ steps.get_release_id.outputs.release_url }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Get Changelog Content
         id: get_changelog_content
         run: |
