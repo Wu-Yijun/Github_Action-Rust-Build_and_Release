@@ -43,7 +43,7 @@ async function updateReleaseNotes() {
       .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
         owner: owner,
         repo: repo,
-        release_id: releaseId,
+        release_id: "" + releaseId,
         body: "test",
       })
       .then(response => {
