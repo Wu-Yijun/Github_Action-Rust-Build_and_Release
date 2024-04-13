@@ -18,17 +18,23 @@ async function updateReleaseNotes() {
     console.error('Error reading file:', error);
   }
 
-  await octokit.request(
-      `PATCH /repos/${owner}/${repo}/releases/${release_id}`, {
+  await octokit
+      .request(`PATCH /repos/${owner}/${repo}/releases/${release_id}`, {
         owner: owner,
         repo: repo,
         release_id: release_id,
-        tag_name: tag_name,
-        target_commitish: 'master',
+        // tag_name: tag_name,
+        // target_commitish: 'master',
         body: content,
-        draft: false,
-        prerelease: false,
-        headers: {'X-GitHub-Api-Version': '2022-11-28'}
+        // draft: false,
+        // prerelease: false,
+        // headers: {'X-GitHub-Api-Version': '2022-11-28'}
+      })
+      .then(response => {
+        console.log('Release body updated:', response.status);
+      })
+      .catch(error => {
+        console.error('Error updating release body:', error);
       });
 }
 
