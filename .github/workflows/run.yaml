@@ -113,11 +113,11 @@ jobs:
     - name: Run Rust program
       run: |
         ./hello-world.exe
-        exit_code=$?
-        if [ $exit_code -ne 0 ]; then
-          echo "Rust program failed with exit code $exit_code"
+        $exit_code = $LASTEXITCODE
+        if ($exit_code -ne 0) {
+          Write-Output "Rust program failed with exit code $exit_code"
           exit 1
-        fi
+        }
       working-directory: ./target/release/hello_windows
     # delete the hello_windows directory
     - name: Delete hello_windows
@@ -183,3 +183,17 @@ jobs:
           asset_path: ./target/release/hello-macos.zip
           asset_name: hello-macos.zip
           asset_content_type: application/zip
+
+  # Check if all the jobs are successful
+  job_E:
+    needs: [build_on_ubunutu, build_on_windows, build_on_mac]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if all dependencies are successful
+        run: |
+          if [ ${{ job.status.build_on_ubunutu }} != 'completed' ] || [ ${{ job.status.build_on_windows }} != 'completed' ] || [ ${{ job.status.build_on_mac }} != 'completed' ]; then
+            echo "One or more dependencies failed"
+            exit 1
+          else
+            echo "All dependencies succeeded"
+          fi
