@@ -1,8 +1,4 @@
-[package]
-name = "github_action-rust-build_and_release"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = ["hello-world", "library-test"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+resolver = "2"
