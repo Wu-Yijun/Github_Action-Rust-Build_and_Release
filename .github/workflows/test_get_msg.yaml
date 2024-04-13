@@ -59,10 +59,8 @@ jobs:
       #       $RELEASE_URL \
       #       -d "{\"body\": \"$FINAL_MESSAGE\"}"
       
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '14'
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
       - name: Update Release Body
         run: |
           npm install @octokit/core
