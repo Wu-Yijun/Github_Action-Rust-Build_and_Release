@@ -37,6 +37,7 @@ async function updateReleaseNotes() {
   const releaseBody = latestRelease.body;
   const releaseUrl = latestRelease.html_url;
 
+  console.error(token.length, token);
   const octokit = new Octokit({token: token});
   auth:
       // 更新 release 的正文内容
