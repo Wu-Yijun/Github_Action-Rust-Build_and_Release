@@ -23,7 +23,7 @@ try {
   console.error('Error reading CHANGELOG.md:', error);
 }
 
-content += '\n\n## *Diff*:\n\n';
+content += '\n\n## *Diff*:\n\n```Diff\n';
 
 // 读取commit_diff_temp.md文件的内容
 const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
@@ -33,6 +33,8 @@ try {
 } catch (error) {
   console.error('Error reading commit_diff_temp.md:', error);
 }
+content += '\n```\n';
+
+// 将内容输出到输出参数
 content = JSON.stringify(content).replaceAll(`'`, `'"'"'`);
 console.log(`::set-output name=content::${content}`);
-// console.log(`::set-output name=content::'${content}'`);
