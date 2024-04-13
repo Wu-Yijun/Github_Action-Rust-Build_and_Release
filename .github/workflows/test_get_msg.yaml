@@ -53,5 +53,5 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             $RELEASE_URL \
-            -d "{\"body\": $FINAL_MESSAGE}"
+            -d "{\"body\": \"$FINAL_MESSAGE\"}"
 
