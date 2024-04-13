@@ -24,8 +24,8 @@ fn main() {
 
     println!("Hello, world!");
     println!("Running on {}", PLATFORM);
-    let lib = unsafe { libloading::Library::new(TEST_ERROR_PATH).unwrap() };
-    // let lib = unsafe { libloading::Library::new(LIBRART_PATH).unwrap() };
+    // let lib = unsafe { libloading::Library::new(TEST_ERROR_PATH).unwrap() };
+    let lib = unsafe { libloading::Library::new(LIBRART_PATH).unwrap() };
     let add: libloading::Symbol<fn(usize, usize) -> usize> = unsafe { lib.get(b"add\0").unwrap() };
     println!("Test ffi: 1 + 2 = {}", add(1, 2));
 
