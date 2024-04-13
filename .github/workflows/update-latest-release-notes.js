@@ -40,8 +40,8 @@ async function updateReleaseNotes() {
   // 更新 release 的正文内容
   await octokit
       .request(`PATCH /repos/${owner}/${repo}/releases/${releaseId}`, {
-        owner: 'owner',
-        repo: 'repo',
+        owner: owner,
+        repo: repo,
         release_id: releaseId,
         body: releaseBody + '\n\nUpdated body content'
       })
