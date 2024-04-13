@@ -40,15 +40,14 @@ jobs:
       - name: Get Changelog Content
         id: get_changelog_content
         run: |
-          CHANGELOG_CONTENT=$(cat CHANGELOG.md)
-          echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
+          echo "::set-output name=changelog_content::$(cat CHANGELOG.md)"
 
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
           COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
           CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.changelog_content }}"
-          FINAL_MESSAGE="## $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
+          FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
           curl -L \
             -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
