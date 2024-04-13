@@ -10,19 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_id: ${{ steps.get_release_id.outputs.release_id }}
-      release_url: ${{ steps.get_release_id.outputs.release_url }}
+      # release_url: ${{ steps.get_release_id.outputs.release_url }}
+      release_tag: ${{ steps.get_release_id.outputs.release_tag }}
     steps:
       - name: Get Latest Release ID
         id: get_release_id
         run: |
-          RELEASE_ID=$(curl -sS -X GET \
+          RELEASE_INFO=$(curl -sS -X GET \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.id')
+            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          RELEASE_ID=$(echo "$RELEASE_INFO" | jq -r '.id')
+          RELEASE_TAG=$(echo "$RELEASE_INFO" | jq -r '.tag_name')
           RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
           echo "::set-output name=release_id::$RELEASE_ID"
           echo "::set-output name=release_url::$RELEASE_URL"
-
+          echo "::set-output name=release_tag::$RELEASE_TAG"
 
   update-release-body:
     needs: get_counter_and_release
@@ -43,15 +46,24 @@ jobs:
         with:
           path: ./CHANGELOG.md
 
+      # - name: Update Release Body
+      #   run: |
+      #     RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
+      #     COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
+      #     CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.content }}"
+      #     FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
+      #     curl -L \
+      #       -X PATCH \
+      #       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Accept: application/vnd.github.v3+json" \
+      #       $RELEASE_URL \
+      #       -d "{\"body\": \"$FINAL_MESSAGE\"}"
       - name: Update Release Body
         run: |
-          RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
-          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
-          CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.content }}"
-          FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
-          curl -L \
-            -X PATCH \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            $RELEASE_URL \
-            -d "{\"body\": \"$FINAL_MESSAGE\"}"
+          token="${{ secrets.GITHUB_TOKEN }}"
+          owner="${{ github.repository_owner }}"
+          repo="${{ github.event.repository.name }}"
+          release_id="${{ needs.get_counter_and_release.outputs.release_id }}"
+          tag_name="${{ needs.get_counter_and_release.outputs.release_tag }}"
+          release_info="${{ steps.get_commit_message.outputs.commit_message }}"
+          node ./.github/workflows/update-latest-release-notes.js $token $owner $repo $release_id $tag_name $release_info
