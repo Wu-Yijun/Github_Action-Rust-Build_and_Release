@@ -67,7 +67,8 @@ jobs:
         cd ..
     # Run the Rust program
     - name: Run Rust program
-      run: ./target/release/temp_files/hello-world
+      run: |
+        ./target/release/temp_files/hello-world
       working-directory: ./target/release/temp_files
       continue-on-error: true
     # Check exit code
@@ -111,7 +112,8 @@ jobs:
         cd ..
     # Run the Rust program
     - name: Run Rust program
-      run: ./target/release/hello_windows/hello-world.exe
+      run: |
+        ./target/release/hello_windows/hello-world.exe
       working-directory: ./target/release
       continue-on-error: true
     # Check exit code
@@ -160,7 +162,8 @@ jobs:
           cd ..
       # Run the Rust program
       - name: Run Rust program
-        run: ./target/release/temp_files/hello-world
+        run: |
+          ./target/release/temp_files/hello-world
         working-directory: ./target/release/temp_files
         continue-on-error: true
       # Check exit code
