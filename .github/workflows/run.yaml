@@ -17,7 +17,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build Project
       run: cargo build --verbose --release
-
+    # list the files in the target/release directory
+    - name: List Files
+      run: ls -R ./target/release
     # then release to github release
     - name: Create Release
       id: create_release
