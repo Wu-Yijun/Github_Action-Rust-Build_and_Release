@@ -1,6 +1,5 @@
 
-async function updateReleaseNotes(
-    path, token, owner, repo, release_id, tag_name, release_info) {
+async function updateReleaseNotes() {
   // 获取传递的参数
   const args = process.argv.slice(6);
   const [token, owner, repo, release_id, tag_name, release_info] = args;
@@ -26,4 +25,4 @@ async function updateReleaseNotes(
       });
 }
 
-updateReleaseNotes(...process.argv.slice(2)).catch(console.error);
+updateReleaseNotes().catch(console.error);
