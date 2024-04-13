@@ -38,7 +38,7 @@ jobs:
         id: diff
         run: |
           git fetch --prune --unshallow
-          git diff --word-diff=plain ${{ github.event.before }} ${{ github.sha }} > commit_diff_temp.md
+          git diff --word-diff=porcelain ${{ github.event.before }} ${{ github.sha }} > commit_diff_temp.md
 
       - name: Get Changelog Content
         id: get_changelog_content
