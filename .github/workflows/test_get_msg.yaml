@@ -58,8 +58,14 @@ jobs:
       #       -H "Accept: application/vnd.github.v3+json" \
       #       $RELEASE_URL \
       #       -d "{\"body\": \"$FINAL_MESSAGE\"}"
+      
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '14'
       - name: Update Release Body
         run: |
+          npm install @octokit/core
           token="${{ secrets.GITHUB_TOKEN }}"
           owner="${{ github.repository_owner }}"
           repo="${{ github.event.repository.name }}"

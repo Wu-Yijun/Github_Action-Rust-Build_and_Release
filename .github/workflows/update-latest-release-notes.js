@@ -7,6 +7,8 @@ async function updateReleaseNotes() {
   // Octokit.js
   // https://github.com/octokit/core.js#readme
   const {promises: fs} = require('fs')
+  const { Octokit } = require("@octokit/core");
+  
   const octokit = new Octokit({auth: token});
 
   const content = await fs.readFile(path, 'utf8');
