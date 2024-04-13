@@ -12,46 +12,52 @@ jobs:
       release_id: ${{ steps.get_release_id.outputs.release_id }}
       release_url: ${{ steps.get_release_id.outputs.release_url }}
     steps:
-      - name: Get Latest Release ID
-        id: get_release_id
-        run: |
-          RELEASE_ID=$(curl -sS -X GET \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.id')
-          RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
-          echo "::set-output name=release_id::$RELEASE_ID"
-          echo "::set-output name=release_url::$RELEASE_URL"
-
-
-  update-release-body:
-    needs: get_counter_and_release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get Commit Message
-        id: get_commit_message
-        run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          echo "::set-output name=commit_message::$COMMIT_MESSAGE"
-      
       - name: Get Changelog Content
         id: get_changelog_content
         run: |
-          CHANGELOG_CONTENT=$(cat CHANGELOG.md | jq -s -R 'split("\n")' | jq -s -R 'join("\\n")')
+          CHANGELOG_CONTENT=$(sed -z 's/\n/\\n/g' CHANGELOG.md)
+          cat $CHANGELOG_CONTENT
           echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
+      # - name: Get Latest Release ID
+      #   id: get_release_id
+      #   run: |
+      #     RELEASE_ID=$(curl -sS -X GET \
+      #       -H "Accept: application/vnd.github.v3+json" \
+      #       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #       https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.id')
+      #     RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
+      #     echo "::set-output name=release_id::$RELEASE_ID"
+      #     echo "::set-output name=release_url::$RELEASE_URL"
 
-      - name: Update Release Body
-        run: |
-          RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
-          COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
-          CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.changelog_content }}"
-          FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
-          curl -L \
-            -X PATCH \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            $RELEASE_URL \
-            -d "{\"body\": \"$FINAL_MESSAGE\"}"
+
+  # update-release-body:
+  #   needs: get_counter_and_release
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Get Commit Message
+  #       id: get_commit_message
+  #       run: |
+  #         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+  #         echo "::set-output name=commit_message::$COMMIT_MESSAGE"
+      
+  #     - name: Get Changelog Content
+  #       id: get_changelog_content
+  #       run: |
+  #         CHANGELOG_CONTENT=$(cat CHANGELOG.md | jq -s -R 'split("\n")' | jq -s -R 'join("\\n")')
+  #         echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
+
+  #     - name: Update Release Body
+  #       run: |
+  #         RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
+  #         COMMIT_MESSAGE="${{ steps.get_commit_message.outputs.commit_message }}"
+  #         CHANGELOG_CONTENT="${{ steps.get_changelog_content.outputs.changelog_content }}"
+  #         FINAL_MESSAGE="### $COMMIT_MESSAGE\n\n$CHANGELOG_CONTENT"
+  #         curl -L \
+  #           -X PATCH \
+  #           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+  #           -H "Accept: application/vnd.github.v3+json" \
+  #           $RELEASE_URL \
+  #           -d "{\"body\": \"$FINAL_MESSAGE\"}"
