@@ -9,6 +9,7 @@ async function updateReleaseNotes() {
   const args = process.argv.slice(2);
   const [release_info, token] = args;
   const repoFullName = process.env.GITHUB_REPOSITORY;
+  console.error(process.env);
   const [owner, repo] = repoFullName.split('/');
   const path = './CHANGELOG.md';
 
@@ -20,7 +21,7 @@ async function updateReleaseNotes() {
   }
 
   // 获取最新的 release 信息
-  const octokit = new Octokit({auth: token});
+  const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
   const latestRelease =
       await octokit
           .request(
