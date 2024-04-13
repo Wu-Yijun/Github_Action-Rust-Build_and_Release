@@ -1,8 +1,9 @@
 function convert_diff(diff) {
-  return diff;
+  // return diff;
   const lines = diff.split('\n');
   let result = '';
   let state = 'none';
+  //   return diff;
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
     if (line.startsWith('diff --git')) {
@@ -36,17 +37,27 @@ function convert_diff(diff) {
     }
     // 正文一共4种状态, +, -, 空格, ~开头
     if (line.startsWith(' ')) {
-      // 如果当前行以空格开头, 则表示这是正常行,
-      // 需要判断它的下一行是什么状态, 如果是~开头, 则表示这是正常行的结束
+      // 如果当前行以空格开头,
+      // 需要判断它的下一行是什么状态, 如果是~开头, 则表示这是正常行
       // 我们在正常行首加上 * , 表示正常行
-      // 如果是+或-, 则表示这是一个发生变化的行, 需要在行首加上一个换行,
-      // 与正常行分开
-      //
+      // 如果是+或-, 则表示这是一个发生变化的行,
+      // 需要在行首额外加上一个换行, 不加 * , 正常在行尾换行
+      if (lines[i + 1].startsWith('~')) {
+        result += `*${line}\n`;
+      } else {
+        result += `\n${line}\n`;
+      }
+      continue;
+    }
+    if (line.startsWith('-') || line.startsWith('+')) {
+      // 如果当前行以+-开头, 则表示这是一个发生变化的行, 我们保存+-不变,
+      // 正常在行尾换行
       result += `${line}\n`;
       continue;
     }
-    if (line.startsWith('-')) {
-      result += `<font color="red">${line}</font>\n`;
+    if (line.startsWith('~')) {
+      // 如果当前行以~开头, 则表示这是换行, 由于我们已经在上面处理了换行,
+      // 所以这里不需要处理, 直接略过
       continue;
     }
     result += `${line}\n`;
