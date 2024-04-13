@@ -1,4 +1,4 @@
-# 手动运行
+# 手动运行 或 push 到 master 分支时触发
 on:
   workflow_dispatch:
     inputs:

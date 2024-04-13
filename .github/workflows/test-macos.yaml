@@ -1,4 +1,4 @@
-# 手动运行
+# 手动运行 或 push 到 master 分支时触发
 on:
   workflow_dispatch:
     inputs:
@@ -6,11 +6,11 @@ on:
         description: 'Name of the person to greet'
         required: true
         default: 'Mona the Octocat'
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+  #     - master
   
-name: Build and Release
+name: Build and Release Macos
   
 jobs:
   get_counter_and_release:
