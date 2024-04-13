@@ -27,7 +27,7 @@ jobs:
         id: create_or_update_release
         uses: actions/create-release@v1
         with:
-          tag_name: "v1.0.${{ steps.get_counter.outputs.counter }}"
+          tag_name: "v1.2.${{ steps.get_counter.outputs.counter }}"
           release_name: Release ${{ steps.get_counter.outputs.counter }}
           body: |
             This is release ${{ steps.get_counter.outputs.counter }}.

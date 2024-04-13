@@ -1,15 +1,15 @@
 # 手动运行
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       name:
-#         description: 'Name of the person to greet'
-#         required: true
-#         default: 'Mona the Octocat'
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Name of the person to greet'
+        required: true
+        default: 'Mona the Octocat'
+# on:
+#   push:
+#     branches:
+#       - master
 
 name: Test Release
 
