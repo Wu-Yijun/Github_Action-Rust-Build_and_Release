@@ -31,12 +31,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get Commit Message
+        id: get_commit_message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "::set-output name=commit_message::$COMMIT_MESSAGE"
+      
       - name: Get Changelog Content
         id: get_changelog_content
         run: |
-          CHANGELOG_CONTENT=$(sed -z 's/\n/\\n/g' CHANGELOG.md)
+          CHANGELOG_CONTENT=$(cat CHANGELOG.md | tr '\n' '\\n')
           echo "::set-output name=changelog_content::$CHANGELOG_CONTENT"
-      
+
       - name: Update Release Body
         run: |
           RELEASE_URL=${{ needs.get_counter_and_release.outputs.release_url }}
