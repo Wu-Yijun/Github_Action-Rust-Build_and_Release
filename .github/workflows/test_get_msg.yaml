@@ -3,7 +3,7 @@ name: Update Release Body
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   get_counter_and_release:
