@@ -54,7 +54,8 @@ function convert_diff(diff) {
         }
       } else {
         // 但如果这一行全是空格, 那么我们只需要在行尾加换行
-        if (line.trim() !== '') {
+        // 或者如果这一行已经是变化行状态, 那么我们只需要在行尾加换行
+        if (line.trim() !== '' && state !== 'change') {
           result += '\n';
         }
         result += `${line}\n`;
