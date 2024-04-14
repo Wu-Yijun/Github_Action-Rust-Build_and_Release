@@ -29,12 +29,12 @@ jobs:
       - name: Get version
         id: get_release_info
         run: |
-          VERSION = $(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-          VERSION_MAJOR_MAIN = $(echo $VERSION | cut -d '.' -f 1 | cut -c 2-)
-          VERSION_MAJOR = $(echo $VERSION | cut -d '.' -f 2)
-          VERSION_MINOR = $(echo $VERSION | cut -d '.' -f 3)
-          VERSION_BUILD = $(echo $VERSION | cut -d '.' -f 4)
-          RELEASE_TAG = "v$VERSION_MAJOR_MAIN.$VERSION_MAJOR.$((VERSION_MINOR+1)).${{ github.run_number }}"
+          VERSION=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          VERSION_MAJOR_MAIN=$(echo $VERSION | cut -d '.' -f 1 | cut -c 2-)
+          VERSION_MAJOR=$(echo $VERSION | cut -d '.' -f 2)
+          VERSION_MINOR=$(echo $VERSION | cut -d '.' -f 3)
+          VERSION_BUILD=$(echo $VERSION | cut -d '.' -f 4)
+          RELEASE_TAG="v$VERSION_MAJOR_MAIN.$VERSION_MAJOR.$((VERSION_MINOR+1)).${{ github.run_number }}"
           echo "::set-output name=release_tag::$RELEASE_TAG"
           echo "::set-output name=VERSION_MAJOR_MAIN::$VERSION_MAJOR_MAIN"
           echo "::set-output name=VERSION_MAJOR::$VERSION_MAJOR"
