@@ -24,9 +24,9 @@ function main() {
   } catch (error) {
     console.error('Error reading CHANGELOG.md:', error);
   }
-  
+
   content += '\n\n## *Git Diff*:\n\n';
-  content += `<details><summary>Changes are listed as follows:</summary>`;
+  content += `<details><summary>Changes are listed as follows:</summary>\n`;
 
   // 读取commit_diff_temp.md文件的内容
   const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
@@ -60,9 +60,9 @@ function convert_diff(diff) {
       // 进入diff状态
       let result = '';
       if (state !== 'none') {
-        result += '```\n\n';
+        result += '\n```\n\n';
       }
-      result += `### ${line.split(' ')[2].slice(2)}\n\n` +
+      result += `\n### ${line.split(' ')[2].slice(2)}\n\n` +
           '```bash\n' + line + '\n```\n\n' +
           '```diff\n';
       state = 'diff';
@@ -119,39 +119,53 @@ function convert_diff(diff) {
     }
     if (line.startsWith('~')) {
       // 如果当前行以~开头, 则表示这是换行, 由于我们已经在上面处理了换行,
-      // 所以这里不需要处理, 直接略过
+      // 我们将
+      typed_lines.push('newline', `${line.slice(1)}\n`);
       continue;
     }
     // 如果当前行不符合以上任何一种情况, 则表示这是一个异常行,
     // 在前面加一个感叹号直接输出
-    typed_lines.push(['basic', `!${line}\n`]);
+    typed_lines.push(['basic', `! ${line}\n`]);
   }
   // 最后, 我们需要将最后一个diff的后缀加上 ``` \n\n
   if (state !== 'none') {
     typed_lines.push(['basic', '\n```\n\n']);
   }
-  // 将处理后的行拼接起来, 其中 basic 组的前后需要加上换行
+  // 将处理后的行拼接起来, 其中 basic 组的前后需要额外加上换行
+  // 在 non-basic 组内, 如果下一个是 newline, 则需要将最后的换行去掉, 改为
+  // \t\\n\n 在 non-basic 组内, 如果下一个是 non-basic, 则需要将最后的换行去掉,
+  // 改为 \t\\\n
   let result = '';
   state = 'baisc'
   for (let i = 0; i < typed_lines.length; i++) {
     let line = typed_lines[i];
     if (line[0] === 'basic') {
+      // basic
       if (state === 'basic') {
         result += line[1];
       } else {
         result += '\n' + line[1];
         state = 'basic';
       }
-    } else {
+    } else if (line[0] !== 'newline') {
+      // non-baisc
       if (state === 'basic') {
-        result += '\n' + line[1];
+        result += '\n';
         state = 'not basic';
-      } else {
-        result += line[1];
       }
+      if (typed_lines[i + 1] === 'newline') {
+        result += line[1].slice(0, -1) + '\t\\n\n';
+      }else if (typed_lines[i + 1][0] === 'basic') {
+        result += line[1];
+      } else {
+        result += line[1].slice(0, -1) + '\t\\\\n';
+      }
+    } else {
+      // newline
     }
   }
   return result;
 }
+
 
 main();
