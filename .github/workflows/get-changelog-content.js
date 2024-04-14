@@ -46,7 +46,7 @@ function main() {
 
 function convert_diff(diff) {
   // return diff;
-  const lines = diff.split('\n');
+  const lines = diff.replaceAll('\r', '').split('\n');
   let typed_lines = [];
   let state = 'none';
   //   return diff;
@@ -123,6 +123,9 @@ function convert_diff(diff) {
       typed_lines.push('newline', line.slice(1));
       continue;
     }
+    if (line === '') {
+      typed_lines.push(['basic', '']);
+    }
     // 如果当前行不符合以上任何一种情况, 则表示这是一个异常行,
     // 在前面加一个感叹号直接输出
     typed_lines.push(['basic', '! ' + line]);
@@ -136,7 +139,7 @@ function convert_diff(diff) {
   // \t\\n\n 在 non-basic 组内, 如果下一个是 non-basic, 则需要将最后的换行去掉,
   // 改为 \t\\\n
   let result = '';
-  state = 'baisc'
+  let is_state_basic = true;
   const isbasic = (line) => line && line[0] === 'basic';
   const isnewline = (line) => line && line[0] === 'newline';
   const isnonbasic = (line) => line &&
@@ -146,24 +149,27 @@ function convert_diff(diff) {
     let line = typed_lines[i];
     if (isbasic(line)) {
       // basic
-      if (isnonbasic(typed_lines[i - 1])) {
+      if (!is_state_basic) {
         result += '\n';
+        is_state_basic = true;
       }
       result += line[1] + '\n';
-      if (isnonbasic(typed_lines[i + 1])) {
-        result += '\n';
-      }
     } else if (isnonbasic(line)) {
       // non-baisc
+      if (is_state_basic) {
+        result += '\n';
+        is_state_basic = false;
+      }
       if (isnewline(typed_lines[i + 1])) {
-        result += line[1] + '\t\\n\n';
+        result += line[1] + '\t\\\\n\n';
       } else if (isnonbasic(typed_lines[i + 1])) {
         result += line[1] + '\t\n';
       } else if (isbasic(typed_lines[i + 1])) {
-        result += line[1] + '\t\\\n';
+        result += line[1] + '\t\\\\\n';
       }
     } else if (isnewline(line)) {
       // newline
+      result += '~~\n';
     }
   }
   return result;
