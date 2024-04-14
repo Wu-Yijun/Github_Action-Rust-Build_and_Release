@@ -1,3 +1,47 @@
+
+function main() {
+  const {execSync} = require('child_process');
+
+  let content = '';
+  try {
+    // 执行 git log 命令获取最近一次提交的提交消息
+    const COMMIT_MESSAGE = execSync('git log -1 --pretty=%B').toString().trim();
+    // 分段, 每段的两端加上斜体 * *
+    content = content +
+        COMMIT_MESSAGE.split('\n').map(line => `### *${line}*`).join('\n');
+  } catch (error) {
+    console.error('Error getting commit message:', error);
+  }
+
+  content += '\n\n';
+
+  // 读取 CHANGELOG.md 文件的内容
+  const fs = require('fs');
+  const CHANGELOG_FILE = 'CHANGELOG.md';
+  try {
+    const CHANGELOG_CONTENT = fs.readFileSync(CHANGELOG_FILE, 'utf8');
+    content = content + CHANGELOG_CONTENT;
+  } catch (error) {
+    console.error('Error reading CHANGELOG.md:', error);
+  }
+
+  content += '\n\n## *Diff*:\n\nChanges are listed as follows:\n';
+
+  // 读取commit_diff_temp.md文件的内容
+  const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
+  try {
+    const COMMIT_DIFF_CONTENT = fs.readFileSync(COMMIT_DIFF_FILE, 'utf8');
+    content = content + convert_diff(COMMIT_DIFF_CONTENT);
+  } catch (error) {
+    console.error('Error reading commit_diff_temp.md:', error);
+  }
+  content += '\n```\n';
+
+  // 将内容输出到输出参数
+  content = JSON.stringify(content).replaceAll(`'`, `'"'"'`);
+  console.log(`::set-output name=content::${content}`);
+}
+
 function convert_diff(diff) {
   // return diff;
   const lines = diff.split('\n');
@@ -15,7 +59,7 @@ function convert_diff(diff) {
       if (state !== 'none') {
         result += '```\n\n';
       }
-      result += `#### ${line.split(' ')[2]}\n\n` +
+      result += `#### ${line.split(' ')[2].slice(1)}\n\n` +
           '```bash\n' + line + '\n```\n\n' +
           '```diff\n';
       state = 'diff';
@@ -81,43 +125,4 @@ function convert_diff(diff) {
   return result;
 }
 
-const {execSync} = require('child_process');
-
-let content = '';
-try {
-  // 执行 git log 命令获取最近一次提交的提交消息
-  const COMMIT_MESSAGE = execSync('git log -1 --pretty=%B').toString().trim();
-  // 分段, 每段的两端加上斜体 * *
-  content = content +
-      COMMIT_MESSAGE.split('\n').map(line => `### *${line}*`).join('\n');
-} catch (error) {
-  console.error('Error getting commit message:', error);
-}
-
-content += '\n\n';
-
-// 读取 CHANGELOG.md 文件的内容
-const fs = require('fs');
-const CHANGELOG_FILE = 'CHANGELOG.md';
-try {
-  const CHANGELOG_CONTENT = fs.readFileSync(CHANGELOG_FILE, 'utf8');
-  content = content + CHANGELOG_CONTENT;
-} catch (error) {
-  console.error('Error reading CHANGELOG.md:', error);
-}
-
-content += '\n\n## *Diff*:\n\nChanges are listed as follows:\n';
-
-// 读取commit_diff_temp.md文件的内容
-const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
-try {
-  const COMMIT_DIFF_CONTENT = fs.readFileSync(COMMIT_DIFF_FILE, 'utf8');
-  content = content + convert_diff(COMMIT_DIFF_CONTENT);
-} catch (error) {
-  console.error('Error reading commit_diff_temp.md:', error);
-}
-content += '\n```\n';
-
-// 将内容输出到输出参数
-content = JSON.stringify(content).replaceAll(`'`, `'"'"'`);
-console.log(`::set-output name=content::${content}`);
+main();
