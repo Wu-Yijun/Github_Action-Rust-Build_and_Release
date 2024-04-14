@@ -28,6 +28,7 @@ fn main() {
     let lib = unsafe { libloading::Library::new(LIBRART_PATH).unwrap() };
     let add: libloading::Symbol<fn(usize, usize) -> usize> = unsafe { lib.get(b"add\0").unwrap() };
     println!("Test ffi: 1 + 2 = {}", add(1, 2));
+    assert_eq!(999 + 111, add(999, 111));
 
     // If everything is fine, exit with a zero status code
     std::process::exit(0);

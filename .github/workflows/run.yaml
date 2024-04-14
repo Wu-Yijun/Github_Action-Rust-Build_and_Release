@@ -16,21 +16,29 @@ jobs:
   get_counter_and_release:
     runs-on: ubuntu-latest
     outputs:
-      counter: ${{ steps.get_release_info.outputs.counter }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       release_id: ${{ steps.create_release.outputs.id }}
       release_tag: ${{ steps.get_release_info.outputs.release_tag }}
+      version_major_main: ${{ steps.get_release_info.outputs.VERSION_MAJOR_MAIN }}
+      version_major: ${{ steps.get_release_info.outputs.VERSION_MAJOR }}
+      version_minor: ${{ steps.get_release_info.outputs.VERSION_MINOR }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       # Get the current counter value from the latest release
-      - name: Get current counter
+      - name: Get version
         id: get_release_info
         run: |
-          counter=$(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name' | cut -d '.' -f 3)
-          TAG_NAME=v1.3.$((counter + 1)).${{ github.run_number }}
-          echo "::set-output name=counter::$((counter + 1))"
-          echo "::set-output name=release_tag::$TAG_NAME"
+          VERSION = $(curl -sL https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          VERSION_MAJOR_MAIN = $(echo $VERSION | cut -d '.' -f 1 | cut -c 2-)
+          VERSION_MAJOR = $(echo $VERSION | cut -d '.' -f 2)
+          VERSION_MINOR = $(echo $VERSION | cut -d '.' -f 3)
+          VERSION_BUILD = $(echo $VERSION | cut -d '.' -f 4)
+          RELEASE_TAG = "v$VERSION_MAJOR_MAIN.$VERSION_MAJOR.$((VERSION_MINOR+1)).${{ github.run_number }}"
+          echo "::set-output name=release_tag::$RELEASE_TAG"
+          echo "::set-output name=VERSION_MAJOR_MAIN::$VERSION_MAJOR_MAIN"
+          echo "::set-output name=VERSION_MAJOR::$VERSION_MAJOR"
+          echo "::set-output name=VERSION_MINOR::$VERSION_MINOR"
       # Release to github release
       - name: Create release
         id: create_release
@@ -188,19 +196,19 @@ jobs:
 
   # Check if all the jobs are successful before updating the release body
   change_release_body:
-    # needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
-    needs: [get_counter_and_release]
+    needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
+    # needs: [get_counter_and_release]
     runs-on: ubuntu-latest
     steps:
-      # # Check if all the jobs are successful
-      # - name: Check if all dependencies are successful
-      #   run: |
-      #     if [ ${{ job.status.build_on_ubunutu }} != 'completed' ] || [ ${{ job.status.build_on_windows }} != 'completed' ] || [ ${{ job.status.build_on_mac }} != 'completed' ]; then
-      #       echo "One or more dependencies failed"
-      #       exit 1
-      #     else
-      #       echo "All dependencies succeeded"
-      #     fi
+      # Check if all the jobs are successful
+      - name: Check if all dependencies are successful
+        run: |
+          if [ ${{ job.status.build_on_ubunutu }} != 'completed' ] || [ ${{ job.status.build_on_windows }} != 'completed' ] || [ ${{ job.status.build_on_mac }} != 'completed' ]; then
+            echo "One or more dependencies failed"
+            exit 1
+          else
+            echo "All dependencies succeeded"
+          fi
       # Get the release URL
       - name: Checkout code
         uses: actions/checkout@v2
@@ -218,10 +226,10 @@ jobs:
       - name: Update Release Body
         run: |
           RELEASE_URL="https://api.github.com/repos/${{ github.repository }}/releases/${{ needs.get_counter_and_release.outputs.release_id }}"
-          FINAL_MESSAGE='${{ steps.get_changelog_content.outputs.content }}'
+          RELEASE_MESSAGE='${{ steps.get_changelog_content.outputs.content }}'
           curl -L \
             -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             $RELEASE_URL \
-            -d "{\"body\": $FINAL_MESSAGE}"
+            -d "{\"body\": $RELEASE_MESSAGE}"
