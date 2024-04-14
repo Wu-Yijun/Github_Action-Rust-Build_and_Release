@@ -1,10 +1,8 @@
 ## 本次更新内容汇总
-- [x] 添加了change log
-- [x] 在 release 文本添加此 Change Log
-- [x] 修复了 Change log 只显示第一行的bug
-- [x] 添加了比较提交时的改动的功能, 并将其显示在 release note, 同时似乎可以有高亮显示
-- [x] 调整diff级别从逐个单词到单行, 易于显示
-- [x] 调整了 diff 的显示方式
-- [x] 优化了渲染
-- [ ] 将changelog整合入build and release
+- [x] 调整了判断换行的机制
+- [x] 优化了代码结构, 方便显示
+- [x] 补足了一些小 bug
+  - 显示名称时多了一个反斜杠
+  - 没有文章末尾的 ```
+  - 可折叠 
 
