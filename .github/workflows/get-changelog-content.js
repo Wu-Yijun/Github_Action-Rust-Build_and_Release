@@ -64,7 +64,7 @@ function convert_diff(diff) {
       }
       result += `\n### ${line.split(' ')[2].slice(2)}\n\n` +
           '```bash\n' + line + '\n```\n\n' +
-          '```diff\n';
+          '```diff';
       state = 'diff';
       typed_lines.push(['basic', result]);
       continue;
@@ -74,14 +74,14 @@ function convert_diff(diff) {
          line.startsWith('+++ '))) {
       // 如果当前状态为diff, 且当前行以index, ---, +++开头, 则表示这是diff开头,
       // 直接输出加换行
-      typed_lines.push(['basic', `${line}\n`]);
+      typed_lines.push(['basic', line]);
       continue;
     }
     if (line.startsWith('@@ ')) {
       // 如果当前行以@@开头, 则表示这是一个定位行, 直接输出加换行
       // 进入正文状态
       state = 'content';
-      typed_lines.push(['basic', `${line}\n`]);
+      typed_lines.push(['basic', line]);
       continue;
     }
     // 正文一共4种状态, +, -, 空格, ~开头
@@ -95,7 +95,7 @@ function convert_diff(diff) {
         if (line.trim() === '') {
           continue;
         }
-        typed_lines.push(['prefix', `${line}\n`]);
+        typed_lines.push(['prefix', line]);
         continue;
       }
       if (typed_lines[typed_lines.length - 1][0] === 'change') {
@@ -103,10 +103,10 @@ function convert_diff(diff) {
         if (line.trim() === '') {
           continue;
         }
-        typed_lines.push(['suffix', `${line}\n`]);
+        typed_lines.push(['suffix', line]);
         continue;
       }
-      typed_lines.push(['basic', `*${line.slice(1)}\n`]);
+      typed_lines.push(['basic', '*' + line]);
       continue;
     }
     if (line.startsWith('-') || line.startsWith('+')) {
@@ -114,18 +114,18 @@ function convert_diff(diff) {
       // 在行首额外加上一个换行, 不加 * , 正常在行尾换行
       // 正常在行尾换行, 进入变化行状态
       // 同时, 我们用一个空格将+-和后面的内容分开
-      typed_lines.push(['change', `${line[0]} ${line.slice(1)}\n`]);
+      typed_lines.push(['change', `${line[0]} ${line.slice(1)}`]);
       continue;
     }
     if (line.startsWith('~')) {
       // 如果当前行以~开头, 则表示这是换行, 由于我们已经在上面处理了换行,
       // 我们将
-      typed_lines.push('newline', `${line.slice(1)}\n`);
+      typed_lines.push('newline', line.slice(1));
       continue;
     }
     // 如果当前行不符合以上任何一种情况, 则表示这是一个异常行,
     // 在前面加一个感叹号直接输出
-    typed_lines.push(['basic', `! ${line}\n`]);
+    typed_lines.push(['basic', '! ' + line]);
   }
   // 最后, 我们需要将最后一个diff的后缀加上 ``` \n\n
   if (state !== 'none') {
@@ -142,9 +142,9 @@ function convert_diff(diff) {
     if (line[0] === 'basic') {
       // basic
       if (state === 'basic') {
-        result += line[1];
+        result += line[1] + '\n';
       } else {
-        result += '\n' + line[1];
+        result += '\n' + line[1] + '\n';
         state = 'basic';
       }
     } else if (line[0] !== 'newline') {
@@ -154,11 +154,11 @@ function convert_diff(diff) {
         state = 'not basic';
       }
       if (typed_lines[i + 1] === 'newline') {
-        result += line[1].slice(0, -1) + '\t\\n\n';
+        result += line[1] + '\t\\n\n';
       }else if (typed_lines[i + 1][0] === 'basic') {
         result += line[1];
       } else {
-        result += line[1].slice(0, -1) + '\t\\\\n';
+        result += line[1] + '\t\\\\n';
       }
     } else {
       // newline
