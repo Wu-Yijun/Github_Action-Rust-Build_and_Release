@@ -187,7 +187,7 @@ function convert_diff(diff) {
 function getWidthOfText(text) {
   var fullWidthChars = /[^\x00-\xff]/g;  // 匹配全角字符
   var halfWidthChars = /[\x00-\xff]/g;   // 匹配半角字符
-  var fullWidthWidth = 2;                // 全角字符宽度
+  var fullWidthWidth = 1.5;              // 全角字符宽度
   var halfWidthWidth = 1;                // 半角字符宽度
   var width = 0;
 
