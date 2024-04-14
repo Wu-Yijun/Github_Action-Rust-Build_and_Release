@@ -140,6 +140,8 @@ function convert_diff(diff) {
   // 如果下一个是 non-basic, 则需将最后添加 \t\\\\\n
   let result = '';
   let is_state_basic = true;
+  var suffixs;
+  var wrap_lines;
   const isbasic = (line) => !!line && line[0] === 'basic';
   const isnewline = (line) => !!line && !!line[3];
   const isnonbasic = (line) => !!line &&
@@ -150,6 +152,7 @@ function convert_diff(diff) {
     if (isbasic(line)) {
       // basic
       if (!is_state_basic) {
+        result += linkLinesWithSuffix(wrapLines(wrap_lines), suffixs);
         result += '\n';
         is_state_basic = true;
       }
@@ -159,13 +162,21 @@ function convert_diff(diff) {
       if (is_state_basic) {
         result += '\n';
         is_state_basic = false;
+        wrap_lines = [];
+        suffixs = [];
       }
       if (isnewline(typed_lines[i])) {
-        result += line[1] + '\t\\n\n';
+        // result += line[1] + '\t\\n\n';
+        wrap_lines.push(line[1]);
+        suffixs.push('\t\\n\n');
       } else if (isnonbasic(typed_lines[i + 1])) {
-        result += line[1] + '\t\\\\\n';
+        // result += line[1] + '\t\\\\\n';
+        wrap_lines.push(line[1]);
+        suffixs.push('\t\\\n');
       } else if (isbasic(typed_lines[i + 1])) {
-        result += line[1] + '\n';
+        // result += line[1] + '\n';
+        wrap_lines.push(line[1]);
+        suffixs.push('\n');
       }
     }
   }
@@ -173,5 +184,54 @@ function convert_diff(diff) {
   return result;
 }
 
+function getWidthOfText(text) {
+  var fullWidthChars = /[^\x00-\xff]/g;  // 匹配全角字符
+  var halfWidthChars = /[\x00-\xff]/g;   // 匹配半角字符
+  var fullWidthWidth = 2;                // 全角字符宽度
+  var halfWidthWidth = 1;                // 半角字符宽度
+  var width = 0;
+
+  // 计算全角字符宽度
+  var fullWidthMatches = text.match(fullWidthChars);
+  if (fullWidthMatches) {
+    width += fullWidthMatches.length * fullWidthWidth;
+  }
+
+  // 计算半角字符宽度
+  var halfWidthMatches = text.match(halfWidthChars);
+  if (halfWidthMatches) {
+    width += halfWidthMatches.length * halfWidthWidth;
+  }
+
+  return width;
+}
+
+function wrapLines(lines) {
+  const width_indent = 8;
+  let lens = [];
+  for (let i = 0; i < lines.length; i++) {
+    lens.push(getWidthOfText(lines[i]));
+  }
+  // find the longest line
+  let max_len = 0;
+  for (let i = 0; i < lens.length; i++) {
+    max_len = Math.max(max_len, lens[i]);
+  }
+  // set max_len to n * width_indent
+  max_len = (Math.floor(max_len / width_indent) + 1) * width_indent;
+  // wrap the lines
+  for (let i = 0; i < lines.length; i++) {
+    lines[i] += ' '.repeat(max_len - lens[i]);
+  }
+  return lines;
+}
+
+function linkLinesWithSuffix(lines, suffixs) {
+  let res = '';
+  for (let i = 0; i < lines.length; i++) {
+    res += lines[i] + suffixs[i];
+  }
+  return res;
+}
 
 main();
