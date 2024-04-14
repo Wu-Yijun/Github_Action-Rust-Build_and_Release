@@ -47,7 +47,7 @@ function convert_diff(diff) {
         // 如果现在是变化行状态 则需要加换行 转为正常行状态 且不用加 *
         // 因为是紧跟在变化行后面的
         if (state === 'change') {
-          result += '\n';
+          result += `${line}\n`;
           state = 'content';
         } else {
           result += `*${line}\n`;
@@ -105,7 +105,7 @@ try {
   console.error('Error reading CHANGELOG.md:', error);
 }
 
-content += '\n\n## *Diff*:\n\n```Diff\n';
+content += '\n\n## *Diff*:\n\nChanges are listed as follows:\n';
 
 // 读取commit_diff_temp.md文件的内容
 const COMMIT_DIFF_FILE = 'commit_diff_temp.md';
