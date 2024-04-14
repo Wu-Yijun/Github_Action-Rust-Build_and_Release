@@ -15,8 +15,9 @@ function convert_diff(diff) {
       if (state !== 'none') {
         result += '```\n\n';
       }
-      result += `### ${line.split(' ')[2]}\n\`\`\`bash\n${
-          line}\n\`\`\`\n\n\`\`\`diff\n`;
+      result += `#### ${line.split(' ')[2]}\n\n` +
+          '```bash\n' + line + '\n```\n\n' +
+          '```diff\n';
       state = 'diff';
       continue;
     }
@@ -43,16 +44,30 @@ function convert_diff(diff) {
       // 如果是+或-, 则表示这是一个发生变化的行,
       // 需要在行首额外加上一个换行, 不加 * , 正常在行尾换行
       if (lines[i + 1].startsWith('~')) {
-        result += `*${line}\n`;
+        // 如果现在是变化行状态 则需要加换行 转为正常行状态 且不用加 *
+        // 因为是紧跟在变化行后面的
+        if (state === 'change') {
+          result += '\n';
+          state = 'content';
+        } else {
+          result += `*${line}\n`;
+        }
       } else {
-        result += `\n${line}\n`;
+        // 但如果这一行全是空格, 那么我们只需要在行尾加换行
+        if (line.trim() !== '') {
+          result += '\n';
+        }
+        result += `${line}\n`;
       }
       continue;
     }
     if (line.startsWith('-') || line.startsWith('+')) {
       // 如果当前行以+-开头, 则表示这是一个发生变化的行, 我们保存+-不变,
-      // 正常在行尾换行
-      result += `${line}\n`;
+      // 在行首额外加上一个换行, 不加 * , 正常在行尾换行
+      // 正常在行尾换行, 进入变化行状态
+      // 同时, 我们用一个空格将+-和后面的内容分开
+      result += line[0] + ' ' + line.slice(1) + '\n';
+      state = 'change';
       continue;
     }
     if (line.startsWith('~')) {
