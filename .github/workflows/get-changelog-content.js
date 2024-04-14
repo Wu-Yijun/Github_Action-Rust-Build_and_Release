@@ -137,30 +137,32 @@ function convert_diff(diff) {
   // 改为 \t\\\n
   let result = '';
   state = 'baisc'
+  const isbasic = (line) => line && line[0] === 'basic';
+  const isnewline = (line) => line && line[0] === 'newline';
+  const isnonbasic = (line) => line &&
+      (line[0] === 'change' || line[0] === 'prefix' || line[0] === 'suffix');
+
   for (let i = 0; i < typed_lines.length; i++) {
     let line = typed_lines[i];
-    if (line[0] === 'basic') {
+    if (isbasic(line)) {
       // basic
-      if (state === 'basic') {
-        result += line[1] + '\n';
-      } else {
-        result += '\n' + line[1] + '\n';
-        state = 'basic';
-      }
-    } else if (line[0] !== 'newline') {
-      // non-baisc
-      if (state === 'basic') {
+      if (isnonbasic(typed_lines[i - 1])) {
         result += '\n';
-        state = 'not basic';
       }
-      if (typed_lines[i + 1] === 'newline') {
+      result += line[1] + '\n';
+      if (isnonbasic(typed_lines[i + 1])) {
+        result += '\n';
+      }
+    } else if (isnonbasic(line)) {
+      // non-baisc
+      if (isnewline(typed_lines[i + 1])) {
         result += line[1] + '\t\\n\n';
-      }else if (typed_lines[i + 1][0] === 'basic') {
-        result += line[1];
-      } else {
-        result += line[1] + '\t\\\\n';
+      } else if (isnonbasic(typed_lines[i + 1])) {
+        result += line[1] + '\t\n';
+      } else if (isbasic(typed_lines[i + 1])) {
+        result += line[1] + '\t\\\n';
       }
-    } else {
+    } else if (isnewline(line)) {
       // newline
     }
   }
