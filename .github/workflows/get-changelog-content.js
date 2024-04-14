@@ -120,7 +120,7 @@ function convert_diff(diff) {
     if (line.startsWith('~')) {
       // 如果当前行以~开头, 则表示这是换行, 由于我们已经在上面处理了换行,
       // 我们将
-      typed_lines.push('newline', line.slice(1));
+      typed_lines[typed_lines.length - 1][3] = true;
       continue;
     }
     if (line === '') {
@@ -135,14 +135,14 @@ function convert_diff(diff) {
     typed_lines.push(['basic', '\n```\n\n']);
   }
   // 将处理后的行拼接起来, 其中 basic 组的前后需要额外加上换行
-  // 在 non-basic 组内, 如果下一个是 newline, 则需要将最后的换行去掉, 改为
-  // \t\\n\n 在 non-basic 组内, 如果下一个是 non-basic, 则需要将最后的换行去掉,
-  // 改为 \t\\\n
+  // 在 non-basic 组内,
+  // 如果下一个是 newline, 则需要将最后添加 \t\\n\n
+  // 如果下一个是 non-basic, 则需将最后添加 \t\\\\\n
   let result = '';
   let is_state_basic = true;
-  const isbasic = (line) => line && line[0] === 'basic';
-  const isnewline = (line) => line && line[0] === 'newline';
-  const isnonbasic = (line) => line &&
+  const isbasic = (line) => !!line && line[0] === 'basic';
+  const isnewline = (line) => !!line && !!line[3];
+  const isnonbasic = (line) => !!line &&
       (line[0] === 'change' || line[0] === 'prefix' || line[0] === 'suffix');
 
   for (let i = 0; i < typed_lines.length; i++) {
@@ -160,18 +160,16 @@ function convert_diff(diff) {
         result += '\n';
         is_state_basic = false;
       }
-      if (isnewline(typed_lines[i + 1])) {
-        result += line[1] + '\t\\\\n\n';
+      if (isnewline(typed_lines[i])) {
+        result += line[1] + '\t\\n\n';
       } else if (isnonbasic(typed_lines[i + 1])) {
-        result += line[1] + '\t\n';
-      } else if (isbasic(typed_lines[i + 1])) {
         result += line[1] + '\t\\\\\n';
+      } else if (isbasic(typed_lines[i + 1])) {
+        result += line[1] + '\n';
       }
-    } else if (isnewline(line)) {
-      // newline
-      result += '~~\n';
     }
   }
+  console.error(typed_lines);
   return result;
 }
 

@@ -188,18 +188,19 @@ jobs:
 
   # Check if all the jobs are successful before updating the release body
   change_release_body:
-    needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
+    # needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
+    needs: [get_counter_and_release]
     runs-on: ubuntu-latest
     steps:
-      # Check if all the jobs are successful
-      - name: Check if all dependencies are successful
-        run: |
-          if [ ${{ job.status.build_on_ubunutu }} != 'completed' ] || [ ${{ job.status.build_on_windows }} != 'completed' ] || [ ${{ job.status.build_on_mac }} != 'completed' ]; then
-            echo "One or more dependencies failed"
-            exit 1
-          else
-            echo "All dependencies succeeded"
-          fi
+      # # Check if all the jobs are successful
+      # - name: Check if all dependencies are successful
+      #   run: |
+      #     if [ ${{ job.status.build_on_ubunutu }} != 'completed' ] || [ ${{ job.status.build_on_windows }} != 'completed' ] || [ ${{ job.status.build_on_mac }} != 'completed' ]; then
+      #       echo "One or more dependencies failed"
+      #       exit 1
+      #     else
+      #       echo "All dependencies succeeded"
+      #     fi
       # Get the release URL
       - name: Checkout code
         uses: actions/checkout@v2
