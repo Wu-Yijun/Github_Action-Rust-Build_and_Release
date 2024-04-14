@@ -188,8 +188,8 @@ jobs:
 
   # Check if all the jobs are successful before updating the release body
   change_release_body:
-    # needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
-    needs: [get_counter_and_release]
+    needs: [get_counter_and_release, build_on_ubunutu, build_on_windows, build_on_mac]
+    # needs: [get_counter_and_release]
     runs-on: ubuntu-latest
     steps:
       # # Check if all the jobs are successful
