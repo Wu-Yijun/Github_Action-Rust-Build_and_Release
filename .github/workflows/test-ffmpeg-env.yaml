@@ -18,12 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Set up ffmpeg environment
-      - name: Set up ffmpeg environment
+      - name: Install dependencies
         run: |
-          sudo apt install -y clang libavcodec-dev libavformat-dev libavutil-dev pkg-config
+          apt install -y --no-install-recommends clang curl pkg-config
       # Build the project
       - name: Build Project
-        run: cargo build --verbose --release
+        run: cargo build --release
+        # run: cargo build --verbose --release
       # List the files in the target/release directory
       - name: List Files
         run: ls -R ./target/release
