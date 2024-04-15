@@ -87,13 +87,17 @@ jobs:
           mv ffmpeg-*/* ffmpeg/
           Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
           Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
-      - name: Setup Rust
+      - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
       # Build the project
       - name: Build Project
-        run: cargo build --release
+        run: cargo build
       # copy and compress the binary and library into a zip file
       - name: Copy and Compress Binary
         run: |
