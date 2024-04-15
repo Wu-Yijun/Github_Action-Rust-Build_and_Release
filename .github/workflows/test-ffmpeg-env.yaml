@@ -75,10 +75,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Set up ffmpeg environment
-      - name: Install MSYS2
+      - name: Download MSYS2 installer
         run: |
-          choco install -y msys2
-          refreshenv
+          Invoke-WebRequest -Uri "https://repo.msys2.org/distrib/x86_64/msys2-x86_64-latest.exe" -OutFile "msys2-installer.exe"
+      - name: Install MSYS2
+        run: msys2-installer.exe --quiet-mode
       - name: Install dependencies
         # run: |
         #   $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
