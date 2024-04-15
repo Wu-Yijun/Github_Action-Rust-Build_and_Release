@@ -13,60 +13,62 @@ on:
 name: Build and Release
 
 jobs:
-#   build_on_ubunutu:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#       # Set up ffmpeg environment
-#       - name: Install dependencies
-#         run: |
-#           sudo apt install -y --no-install-recommends clang curl pkg-config
-#           sudo apt install libavcodec-dev libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
-#       - name: Set up Rust
-#         uses: actions-rs/toolchain@v1
-#         with:
-#           toolchain: stable
-#           override: true
-#           components: rustfmt, clippy
-#       # Build the project
-#       - name: Build Project
-#         run: cargo build --release
-#         # run: cargo build --verbose --release
-#       # List the files in the target/release directory
-#       - name: List Files
-#         run: ls -R ./target/release
-#       # copy and compress the binary and library into a zip file
-#       - name: Copy and Compress Binary
-#         run: |
-#           cd ./target/release
-#           mkdir -p temp_files/libs
-#           cp hello-world temp_files/
-#           cp *.so temp_files/libs/
-#           cd temp_files
-#           cd ..
-#           cd ..
-#           cd ..
-#       # Test the Rust program
-#       - name: Run Rust program
-#         run: |
-#           ./hello-world
-#           exit_code=$?
-#           if [ $exit_code -ne 0 ]; then
-#             echo "Rust program failed with exit code $exit_code"
-#             exit 1
-#           fi
-#           zip -r ../hello-ubuntu.zip .
-#         working-directory: ./target/release/temp_files
-#       # delete the temp_files directory
-#       - name: Delete temp_files
-#         run: |
-#           rm -rf ./target/release/temp_files
-#       # then upload the zip to the release
-#       - name: Archive code coverage results
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: hello_ubuntu-output-report
-#           path: ./target/release/hello-ubuntu.zip
+  build_on_ubunutu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Set up ffmpeg environment
+      - name: Install dependencies
+        run: |
+          sudo apt install -y --no-install-recommends clang curl pkg-config
+          sudo apt install libavcodec-dev libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      # Build the project
+      - name: Build Project
+        run: cargo build --release
+        # run: cargo build --verbose --release
+      # List the files in the target/release directory
+      - name: List Files
+        run: ls -R ./target/release
+      # copy and compress the binary and library into a zip file
+      - name: Copy and Compress Binary
+        run: |
+          cd ./target/release
+          mkdir -p temp_files/libs
+          cp hello-world temp_files/
+          cp *.so temp_files/libs/
+          cd temp_files
+          cd ..
+          cd ..
+          cd ..
+      # Test the Rust program
+      - name: Run Rust program
+        run: |
+          ./hello-world
+          exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+            echo "Rust program failed with exit code $exit_code"
+            exit 1
+          fi
+          zip -r ../hello-ubuntu.zip .
+        working-directory: ./target/release/temp_files
+      # delete the temp_files directory
+      - name: Delete temp_files
+        run: |
+          rm -rf ./target/release/temp_files
+      # then upload the zip to the release
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello_ubuntu-output-report
+          path: ./target/release/hello-ubuntu.zip
 
   build_on_windows:
     runs-on: windows-latest
@@ -75,24 +77,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Set up ffmpeg environment
-      - name: Download MSYS2 installer
-        run: |
-          Invoke-WebRequest -Uri "https://repo.msys2.org/distrib/x86_64/msys2-x86_64-latest.exe" -OutFile "msys2-installer.exe"
-      - name: Install MSYS2
-        run: msys2-installer.exe --quiet-mode
       - name: Install dependencies
-        # run: |
-        #   $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
-        #   Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
-        #   Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
-        #   7z x ffmpeg-release-full-shared.7z
-        #   mkdir ffmpeg
-        #   mv ffmpeg-*/* ffmpeg/
-        #   Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
-        #   Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
         run: |
-          pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-clang
-
+          $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
+          Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
+          Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
+          7z x ffmpeg-release-full-shared.7z
+          mkdir ffmpeg
+          mv ffmpeg-*/* ffmpeg/
+          Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
+          Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
       # Build the project
       - name: Build Project
         run: cargo build --release
