@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install -y --no-install-recommends clang curl pkg-config
-          sudo apt install libavcodec-devlibavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
+          sudo apt install libavcodec-dev libavutil-dev libavformat-dev libavfilter-dev libavdevice-dev
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
