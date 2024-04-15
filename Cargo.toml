@@ -1,4 +1,19 @@
-[workspace]
-members = ["hello-world", "library-test"]
+# [workspace]
+# members = ["hello-world", "library-test"]
 
-resolver = "2"
+# resolver = "2"
+
+[package]
+name = "hello-world"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libloading = "*"
+
+ndarray = "*"
+video-rs = { version = "*", features = ["ndarray"] }
+
+[[bin]]
+name = "hello-world"
+path = "hello-world/src/main.rs"
