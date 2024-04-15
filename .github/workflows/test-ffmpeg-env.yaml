@@ -20,7 +20,13 @@ jobs:
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
+          apt update
           apt install -y --no-install-recommends clang curl pkg-config
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
       # Build the project
       - name: Build Project
         run: cargo build --release
