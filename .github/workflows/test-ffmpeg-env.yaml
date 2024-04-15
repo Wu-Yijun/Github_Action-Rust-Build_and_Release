@@ -16,7 +16,7 @@ jobs:
   build_on_ubunutu:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
@@ -75,7 +75,7 @@ jobs:
     env:
       FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
