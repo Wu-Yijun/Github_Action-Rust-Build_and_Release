@@ -26,6 +26,7 @@ jobs:
         with:
           toolchain: stable
           override: true
+          components: rustfmt, clippy
       # Build the project
       - name: Build Project
         run: cargo build --release
