@@ -75,6 +75,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Set up ffmpeg environment
+      - name: Install MSYS2
+        run: |
+          choco install -y msys2
+          refreshenv
       - name: Install dependencies
         # run: |
         #   $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
@@ -87,7 +91,7 @@ jobs:
         #   Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
         run: |
           pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-clang
-          
+
       # Build the project
       - name: Build Project
         run: cargo build --release
