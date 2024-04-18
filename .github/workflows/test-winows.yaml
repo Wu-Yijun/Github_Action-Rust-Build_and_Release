@@ -22,3 +22,9 @@ jobs:
         run: |
           HELLO2="Hello, ${{ github.event.inputs.name-of-var-2 }}"
           echo $HELLO2
+          echo $HELLO2 > hello2.txt
+      - name: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello2
+          path: hello2.txt
