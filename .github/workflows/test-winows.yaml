@@ -2,8 +2,8 @@ name: Example Workflow # 工作流名称
 
 on: # 定义触发条件
   push: # 当push到main分支时触发
-    branches:
-      - main
+    # branches:
+    #   - main
   workflow_dispatch: # 或手动触发
     inputs: # 定义输入参数列表
       name-of-var: # 第一个待输入参数
@@ -18,25 +18,25 @@ env: # 定义环境变量
   HELLO1: world1
 
 jobs: # 定义工作流
-  echo-hello: # 工作流名称
-    runs-on: ubuntu-latest # 运行环境
-    steps: # 步骤
-      - name: Echo hello # 步骤 1 的步骤名称
-        # 使用 run 关键字执行 shell 命令
-        run: echo "Hello, ${{ github.event.inputs.name-of-var }}"
-      - name: Echo hello 2 # 步骤 2 的步骤名称
-        # run 关键字后加 | 表示多行命令
-        run: |
-          HELLO2="Hello, ${{ github.event.inputs.name-of-var-2 }}"
-          echo $HELLO2
-          echo $HELLO2 > hello2.txt
-      - name: upload-artifact # 步骤 3 的步骤名称
-        # 使用 uses 关键字引用 actions/upload-artifact@v2 动作
-        # 这个动作会将 hello2.txt 上传到 GitHub Actions 的 Artifacts
-        uses: actions/upload-artifact@v4
-        with: # 输入参数列表
-          name: hello2
-          path: hello2.txt
+  # echo-hello: # 工作流名称
+  #   runs-on: ubuntu-latest # 运行环境
+  #   steps: # 步骤
+  #     - name: Echo hello # 步骤 1 的步骤名称
+  #       # 使用 run 关键字执行 shell 命令
+  #       run: echo "Hello, ${{ github.event.inputs.name-of-var }}"
+  #     - name: Echo hello 2 # 步骤 2 的步骤名称
+  #       # run 关键字后加 | 表示多行命令
+  #       run: |
+  #         HELLO2="Hello, ${{ github.event.inputs.name-of-var-2 }}"
+  #         echo $HELLO2
+  #         echo $HELLO2 > hello2.txt
+  #     - name: upload-artifact # 步骤 3 的步骤名称
+  #       # 使用 uses 关键字引用 actions/upload-artifact@v2 动作
+  #       # 这个动作会将 hello2.txt 上传到 GitHub Actions 的 Artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with: # 输入参数列表
+  #         name: hello2
+  #         path: hello2.txt
 
   env-var-example:
     runs-on: ubuntu-latest
@@ -54,4 +54,70 @@ jobs: # 定义工作流
           echo $HELLO2
           echo $HELLO3
           echo $HELLO4
-    
+      # echo github context
+      - name: Echo github context
+        run: |
+          echo ${{ github.repository }}
+          echo ${{ github.event.inputs.name-of-var }}
+          echo ${{ github.event.inputs.name-of-var-2 }}
+          echo ${{ github.sha }}
+          echo ${{ github.ref }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo ${{ github.event_name }}
+          echo ${{ github.actor }}
+          echo ${{ github.job }}
+          echo ${{ github.run_number }}
+          echo ${{ github.run_id }}
+          echo ${{ github.run_attempt }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event }}
+          echo ${{ github.workspace }}
+          echo ${{ github.action }}
+          echo ${{ github.event_path }}
+          echo ${{ github.workflow }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo ${{ github.event_name }}
+          echo ${{ github.actor }}
+          echo ${{ github.job }}
+          echo ${{ github.run_number }}
+          echo ${{ github.run_id }}
+          echo ${{ github.run_attempt }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event }}
+          echo ${{ github.workspace }}
+          echo ${{ github.action }}
+          echo ${{ github.event_path }}
+          echo ${{ github.workflow }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo ${{ github.event_name }}
+          echo ${{ github.actor }}
+          echo ${{ github.job }}
+          echo ${{ github.run_number }}
+          echo ${{ github.run_id }}
+          echo ${{ github.run_attempt }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event }}
+          echo ${{ github.workspace }}
+          echo ${{ github.action }}
+          echo ${{ github.event_path }}
+          echo ${{ github.workflow }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo ${{ github.event_name }}
+          echo ${{ github.actor }}
+          echo ${{ github.job }}
+          echo ${{ github.run_number }}
+          echo ${{ github.run_id }}
+          echo ${{ github.run_attempt }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event }}
+          echo ${{ github.workspace }}
+          echo ${{ github.action }}
+          echo ${{ github.event_path }}
+          echo ${{ github.workflow }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+          echo ${{ github.event_name}}
