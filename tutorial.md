@@ -20,21 +20,22 @@
   - [工作流](#工作流)
   - [最基本的示例](#一个基本的简单的例子)
 - 进阶 - 文件和参数的传递
-  - 设置和使用环境变量
-  - 在步骤间传递参数
-  - 在工作间传递参数
+  - [设置和使用环境变量, 在步骤间传递参数, 在工作间传递参数](#环境参数的定义,-使用,-与传递)
   - 在工作间传递文件
 - 进阶 - 运行其它格式的脚本
   - [Javascript 脚本](#镇楼)
-  - [Python 脚本](#镇楼)
+  - Python 脚本
 - 进阶 - 外部 Action 的使用
-  - [上传文件到 workflow](#一个基本的简单的例子): actions/upload-artifact@v4 [(hyperlink)](https://github.com/actions/upload-artifact)
-  - [使用仓库的文件和代码](#镇楼): actions/checkout@v4[(hyperlink)](https://github.com/actions/checkout)
-  - [创建和发布 release](#镇楼)
+  - 上传文件到 workflow: actions/upload-artifact@v4 [(hyperlink)](https://github.com/actions/upload-artifact)
+  - 使用仓库的文件和代码: actions/checkout@v4[(hyperlink)](https://github.com/actions/checkout)
+  - 创建和发布 release
+- 进阶 - Github REST API
+- 高级 - 更多技巧
+  - Matrix 矩阵, 复用代码
 - 高级 - 实例分析
-  - [rust 项目的构建测试 和 Release 的发布更新](#镇楼)
-- 高级 - 写自己的库, 用的人多了, 就可以删库跑路了(笑)
-  - [将示例集成为库, 一键调用](#镇楼)
+  - rust 项目的构建测试 和 Release 的发布更新
+- 高级 - 写自己的库, 用的人多了, 就可以删库跑路了
+  - 将示例集成为库, 一键调用
 ---
 
 ## Github Action 能干什么
@@ -297,12 +298,21 @@ jobs: # 定义工作流
 
 ![echo-hello](image-6.png)
 
-## 环境参数
+## 环境参数的定义, 使用, 与传递
 
 环境变量可以有多种定义方法. 包含全局的环境变量, 工作环境下的环境变量, 单步的环境变量, GitHub环境变量, 上一步的输出结果, 别的工作的输出结果.
 
-全局的环境变量在最外层设置, 任何工作的任何步骤中都可用.
+全局的环境变量`HELLO1`在最外层设置, 任何工作的任何步骤中都可用.
 
+第一项工作定义了自己的环境变量 `HELLO2`, 在第一项工作的任何位置可用. 在第一步中还设置了环境变量 `HELLO3` , 第二步打印这些环境变量, 运行的同时设置了单步的环境变量 `HELLO4` . 第三步先标记了 id , 然后又设置了的单步的输出, 这样就可以在第五步中调用这个输出. 第四步是展示了GitHub环境变量包含哪些内容, 于是就可以使用类似第五步的方法打印出来.
+第五步打印了两个 github 环境变量, 接着打印了两个输出, 最后打印了最常用的参数, GITHUB_TOKEN. 这些 Acction 变量可用通过 `${{ NAME}` 的方式调取, **在运行时会自动替换为对应的字符, 因此要注意引号和转义字符的问题**
+第一个工作同时还有一个 output 字段, 定义了自己的最终输出, 可用从自己的步骤的结果, 从环境变量中获取字符串, 拼接到一起.
+
+第二项工作声明自己依赖于第一项工作, 因此会在第一项工作结束后才开始, 我们可用通过 `${{ needs.env-var-example.outputs.NAME }}` 调用第一项工作的output.
+
+示例代码如下:
+
+*.github/workflows/example-env.yaml*
 ```YAML
 name: Example Workflow Env
 
@@ -333,9 +343,9 @@ jobs:
       # set-output 步骤的 HELLO6 输出
       HELLO8: ${{ steps.set-output.outputs.HELLO6 }}
       # 环境变量 HELLO1 与 world9 拼接而成
-      HELLO9: "$HELLO1 world9"
+      HELLO9: "hello $HELLO1"
       # set-output 步骤的 HELLO5 输出 与 world10 拼接而成
-      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} world10
+      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} $HELLO5 $HELLO6
     steps:
       # 设置环境变量
       - name: Set env var
@@ -353,6 +363,7 @@ jobs:
           HELLO4: world4
       # 设置单步输出
       - name: set-output
+        # 使用 id 标记名称便于后面的步骤使用这一步的输出
         id: set-output
         run: |
           HELLO5=world5
@@ -373,13 +384,13 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.inputs.name-of-var }}
           echo ${{ github.event.inputs.name-of-var-2 }}
-          echo "Token = ${{ secrets.GITHUB_TOKEN }}"
+          echo "token = ${{ secrets.GITHUB_TOKEN }}"
   
   # 第二项工作, 依赖第一项工作
   use-output:
     # 依赖项
     needs: env-var-example
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       # 打印之前步骤的输出
       - name: Echo output

@@ -38,6 +38,7 @@ jobs: # 定义工作流
   #         name: hello2
   #         path: hello2.txt
 
+  # 第一项工作
   env-var-example:
     runs-on: ubuntu-latest
     # 设置局域环境变量
@@ -50,9 +51,9 @@ jobs: # 定义工作流
       # set-output 步骤的 HELLO6 输出
       HELLO8: ${{ steps.set-output.outputs.HELLO6 }}
       # 环境变量 HELLO1 与 world9 拼接而成
-      HELLO9: "$HELLO1 world9"
+      HELLO9: "hello $HELLO1"
       # set-output 步骤的 HELLO5 输出 与 world10 拼接而成
-      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} world10
+      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} $HELLO5 $HELLO6
     steps:
       # 设置环境变量
       - name: Set env var
@@ -70,6 +71,7 @@ jobs: # 定义工作流
           HELLO4: world4
       # 设置单步输出
       - name: set-output
+        # 使用 id 标记名称便于后面的步骤使用这一步的输出
         id: set-output
         run: |
           HELLO5=world5
@@ -90,13 +92,13 @@ jobs: # 定义工作流
           echo ${{ github.event_name }}
           echo ${{ github.event.inputs.name-of-var }}
           echo ${{ github.event.inputs.name-of-var-2 }}
-          echo "Token = ${{ secrets.GITHUB_TOKEN }}"
+          echo "token = ${{ secrets.GITHUB_TOKEN }}"
   
   # 第二项工作, 依赖第一项工作
   use-output:
     # 依赖项
     needs: env-var-example
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       # 打印之前步骤的输出
       - name: Echo output
@@ -105,4 +107,3 @@ jobs: # 定义工作流
           echo ${{ needs.env-var-example.outputs.HELLO8 }}
           echo ${{ needs.env-var-example.outputs.HELLO9 }}
           echo ${{ needs.env-var-example.outputs.HELLO10 }}
-  
