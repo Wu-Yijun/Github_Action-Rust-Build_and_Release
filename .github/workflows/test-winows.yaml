@@ -1,16 +1,13 @@
 on:
   workflow_dispatch:
     inputs:
-      message:
-        description: 'Message to display'
+      name-of-var:
+        description: 'Description of this var'
         required: true
-      name:
-        description: 'Name of the person to greet'
-        required: true
-        default: 'Mona the Octocat'
-      name2:
-        description: 'Name of the person to greet'
-        required: true
+        default: 'default string'
+      name-of-var-2:
+        description: 'Description of this var2'
+        required: false
 
 
 jobs:

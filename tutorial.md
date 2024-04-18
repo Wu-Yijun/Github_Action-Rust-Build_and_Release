@@ -40,7 +40,7 @@ GitHub Actions 是一个功能强大的自动化工具，可以帮助开发人�
 
 ## Github Action 怎么用
 
-你将 YAML文件(.yml, .yaml) 扔到 ${workspaceRoot}/.github/workflows 下, Github 会自动检测到并且添加到 Actions 部分, 左下方 `all workflows` 下方的对应的就是你的各个YAML文件的工作流, 右侧是这些工作流每次运行的结果.
+你将 YAML文件(.yml, .yaml) 扔到 ${workspaceRoot}/.github/workflows 下, Github 会自动检测到并且添加到 Actions 部分, 左下方 `all workflows` 下方的对应的就是你的各个YAML文件的工作流, 右侧是这些工作流每次运行的结果. **只有主分支创建的yaml文件会被收入工作流, 分支可以修改但是不能创建**
 ![github-action](image.png)
 
 如果你没有 workflow 文件, GitHub 会根据你的项目, 自动推荐一些可能的工作流, 或者你也可以手动设置([Skip this and set up a workflow yourself](#github-action-怎么用))
@@ -139,9 +139,9 @@ on:
       name-of-var:
         description: 'Description of this var'
         required: true
-        default: 'undefined variables replace string'
+        default: 'default string'
       name-of-var-2:
-        description: 'Description of this var'
+        description: 'Description of this var2'
         required: false
 ```
 
