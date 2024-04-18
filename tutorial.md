@@ -299,6 +299,95 @@ jobs: # 定义工作流
 
 ## 环境参数
 
-环境变量可以有多种定义方法
+环境变量可以有多种定义方法. 包含全局的环境变量, 工作环境下的环境变量, 单步的环境变量, GitHub环境变量, 上一步的输出结果, 别的工作的输出结果.
+
+全局的环境变量在最外层设置, 任何工作的任何步骤中都可用.
+
+```YAML
+name: Example Workflow Env
+
+on: # 定义触发条件
+  workflow_dispatch: # 或手动触发
+    inputs: # 定义输入参数列表
+      name-of-var: # 第一个待输入参数
+        description: 'Description of this var'
+        default: 'default string'
+      name-of-var-2: # 第二个待输入参数
+        description: 'Description of this var2'
+        default: "This is contents of the var 2"
+
+env: # 定义全局环境变量
+  HELLO1: world1
+
+jobs:
+  # 第一项工作
+  env-var-example:
+    runs-on: ubuntu-latest
+    # 设置局域环境变量
+    env: # 定义环境变量
+      HELLO2: world2
+    # 设置输出
+    outputs:
+      # set-output 步骤的 HELLO5 输出
+      HELLO7: ${{ steps.set-output.outputs.HELLO5 }}
+      # set-output 步骤的 HELLO6 输出
+      HELLO8: ${{ steps.set-output.outputs.HELLO6 }}
+      # 环境变量 HELLO1 与 world9 拼接而成
+      HELLO9: "$HELLO1 world9"
+      # set-output 步骤的 HELLO5 输出 与 world10 拼接而成
+      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} world10
+    steps:
+      # 设置环境变量
+      - name: Set env var
+        run: |
+          echo "HELLO3=world3" >> $GITHUB_ENV
+      # 使用环境变量
+      - name: Echo env var
+        run: |
+          echo $HELLO1
+          echo $HELLO2
+          echo $HELLO3
+          echo $HELLO4
+        # 设置单步环境变量
+        env:
+          HELLO4: world4
+      # 设置单步输出
+      - name: set-output
+        id: set-output
+        run: |
+          HELLO5=world5
+          echo "::set-output name=HELLO5::$HELLO5"
+          echo "::set-output name=HELLO6::world6"
+      # 使用单步输出
+      - name: use-output
+        run: |
+          echo ${{ steps.set-output.outputs.HELLO5 }}
+          echo ${{ steps.set-output.outputs.HELLO6 }}
+      # 打印 Github 环境变量
+      - name: Echo github context
+        run: node -e "console.log(JSON.stringify(process.env, null, 2))"
+      # 使用 Github 环境变量
+      - name: use-git-context
+        run: |
+          echo "${{ github.repository_owner }}'s repo"
+          echo ${{ github.event_name }}
+          echo ${{ github.event.inputs.name-of-var }}
+          echo ${{ github.event.inputs.name-of-var-2 }}
+          echo "Token = ${{ secrets.GITHUB_TOKEN }}"
+  
+  # 第二项工作, 依赖第一项工作
+  use-output:
+    # 依赖项
+    needs: env-var-example
+    runs-on: ubuntu-latest
+    steps:
+      # 打印之前步骤的输出
+      - name: Echo output
+        run: |
+          echo ${{ needs.env-var-example.outputs.HELLO7 }}
+          echo ${{ needs.env-var-example.outputs.HELLO8 }}
+          echo ${{ needs.env-var-example.outputs.HELLO9 }}
+          echo ${{ needs.env-var-example.outputs.HELLO10 }}
+```
 
 ## 运行 JavaScript 脚本
