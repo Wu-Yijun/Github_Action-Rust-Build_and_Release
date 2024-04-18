@@ -47,6 +47,8 @@ jobs: # 定义工作流
     outputs:
       HELLO7: ${{ steps.set-output.outputs.HELLO5 }}
       HELLO8: ${{ steps.set-output.outputs.HELLO6 }}
+      HELLO9: "$HELLO1 world9"
+      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} world10
     steps:
       - name: Set env var
         run: |
@@ -88,4 +90,6 @@ jobs: # 定义工作流
         run: |
           echo ${{ needs.env-var-example.outputs.HELLO7 }}
           echo ${{ needs.env-var-example.outputs.HELLO8 }}
+          echo ${{ needs.env-var-example.outputs.HELLO9 }}
+          echo ${{ needs.env-var-example.outputs.HELLO10 }}
   
