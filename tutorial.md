@@ -206,5 +206,46 @@ jobs 下的每一项都对应一个独立的工作, 每一项的 key 值就是�
 runs-on 对应着运行时使用的操作系统, 可以为 `ubuntu-latest`, `macos-latest`, `windows-latest` 等.
 steps 为一个数组, 每一项对应一个步骤, 按顺序依次执行. 如果在中间出现错误, 则终止后面的全部工作.
 步骤的名称使用 name 字段控制, 而步骤的具体内容可以为控制台脚本, 也可以使用外部Action.
-控制台命令通过 run 字段输入, 而外部
-而外部ac
+控制台命令通过 run 字段输入, 而外部 Action 通过 uses 字段决定使用的库, 通过 with 字段输入参数.
+
+#### 一个基本的简单的例子
+
+```YAML
+name: Example Workflow # 工作流名称
+
+on: # 定义触发条件
+  push: # 当push到main分支时触发
+    branches:
+      - main
+  workflow_dispatch: # 或手动触发
+    inputs: # 定义输入参数列表
+      name-of-var: # 第一个待输入参数
+        description: 'Description of this var'
+        required: true
+        default: 'default string'
+      name-of-var-2: # 第二个待输入参数
+        description: 'Description of this var2'
+        required: false # 可选参数, 可以不输入
+
+jobs: # 定义工作流
+  echo-hello: # 工作流名称
+    runs-on: ubuntu-latest # 运行环境
+    steps: # 步骤
+      - name: Echo hello # 步骤 1 的步骤名称
+        # 使用 run 关键字执行 shell 命令
+        run: echo "Hello, ${{ github.event.inputs.name-of-var }}"
+      - name: Echo hello 2 # 步骤 2 的步骤名称
+        # run 关键字后加 | 表示多行命令
+        run: |
+          HELLO2="Hello, ${{ github.event.inputs.name-of-var-2 }}"
+          echo $HELLO2
+          echo $HELLO2 > hello2.txt
+      - name: upload-artifact # 步骤 3 的步骤名称
+        # 使用 uses 关键字引用 actions/upload-artifact@v2 动作
+        # 这个动作会将 hello2.txt 上传到 GitHub Actions 的 Artifacts
+        uses: actions/upload-artifact@v2
+        with: # 输入参数列表
+          name: hello2
+          path: hello2.txt
+
+```
