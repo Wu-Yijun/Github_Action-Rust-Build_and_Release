@@ -43,6 +43,10 @@ jobs: # 定义工作流
     # 设置变量
     env: # 定义环境变量
       HELLO2: world2
+    # 设置输出
+    outputs:
+      HELLO7: ${{ steps.set-output.outputs.HELLO5 }}
+      HELLO8: ${{ steps.set-output.outputs.HELLO6 }}
     steps:
       - name: Set env var
         run: |
@@ -57,3 +61,31 @@ jobs: # 定义工作流
       # echo github context
       - name: Echo github context
         run: node -e "console.log(JSON.stringify(process.env, null, 2))"
+
+      - name: set-output
+        id: set-output
+        run: |
+          HELLO5=world5
+          echo "::set-output name=HELLO5::$HELLO5"
+          echo "::set-output name=HELLO6::world6"
+      - name: use-output
+        run: |
+          echo ${{ steps.set-output.outputs.HELLO5 }}
+          echo ${{ steps.set-output.outputs.HELLO6 }}
+      
+      - name: use-git-context
+        run: |
+          echo ${{ github.repository_owner }}
+          echo ${{ github.event_name }}
+          echo ${{ github.event.inputs.name-of-var }}
+          echo ${{ github.event.inputs.name-of-var-2 }}
+  
+  use-output:
+    needs: env-var-example
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo output
+        run: |
+          echo ${{ needs.env-var-example.outputs.HELLO7 }}
+          echo ${{ needs.env-var-example.outputs.HELLO8 }}
+  
