@@ -1,6 +1,9 @@
 on:
-  workflow_dispatch:
-    inputs:
+  push: # 当push到main分支时触发
+    branches:
+      - main
+  workflow_dispatch: # 手动触发
+    inputs: # 定义输入参数列表
       name-of-var:
         description: 'Description of this var'
         required: true
@@ -9,10 +12,13 @@ on:
         description: 'Description of this var2'
         required: false
 
-
 jobs:
   echo-hello:
     runs-on: ubuntu-latest
     steps:
       - name: Echo hello
-        run: echo "Hello, ${{ github.event.inputs.message }}"
+        run: echo "Hello, ${{ github.event.inputs.name-of-var }}"
+      - name: Echo hello 2
+        run: |
+          HELLO2="Hello, ${{ github.event.inputs.name-of-var-2 }}"
+          echo $HELLO2

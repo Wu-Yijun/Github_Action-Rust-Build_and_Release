@@ -51,7 +51,50 @@ GitHub Actions 是一个功能强大的自动化工具，可以帮助开发人�
 yaml 文件的关键有两个部分触发器和工作流
 
 触发器（triggers）定义了何时 GitHub 将运行 Action。
-工作流定义了运行时执行什么工作.
+工作流 (jobs) 定义了运行后执行什么工作.
+
+#### YAML 文件结构格式
+
+参见 [菜鸟教程](https://www.runoob.com/w3cnote/yaml-intro.html)
+
+YAML 的语法和其他高级语言类似，并且可以简单表达清单、散列表，标量等数据形态。它使用空白符号缩进和大量依赖外观的特色，特别适合用来表达或编辑数据结构、各种配置文件、倾印调试内容、文件大纲.
+
+YAML 对大小写敏感, 使用缩进表示层级关系, 缩进的空格数不重要，只要相同层级的元素左对齐即可, `#` 后表示注释
+
+YAML 支持以下几种**数据类型**：
+
+- 对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）
+- 数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）
+- 纯量（scalars）：单个的、不可再分的值
+
+##### 对象
+
+对象键值对使用冒号结构表示 `key: value`，冒号后面要加一个空格。
+也可以使用 `key:{key1: value1, key2: value2, ...}`。
+还可以使用缩进表示层级关系；
+```YAML
+key: 
+    child-key: value
+    child-key2: value2
+```
+
+##### 数组
+
+数组使用方括号逗号结构表示 `[value1, value2, [sub val 1, sub val 2], ...]`.
+还可以用 - 开头的行表示构成一个数组, 使用缩进表示层级关系；
+```YAML
+- value1
+- value2
+- 
+  - sub val 1
+  - sub val 2
+```
+
+##### 纯量
+
+纯量是最基本的，不可再分的值，包括：
+字符串, 布尔值, 整数, 浮点数, Null, 时间, 日期
+
 
 #### 触发器
 
@@ -145,4 +188,16 @@ on:
         required: false
 ```
 
-workflow_dispatch 说明这是一个外部触发器, inputs 部分包含了需要输入的参数, required 规定了此参数是否是必须的, 而 default 给出了填充此参数的默认字符.
+workflow_dispatch 说明这是一个外部触发器, inputs 部分包含了需要输入的参数,description 给出了在网页上显示的变量名称(描述), required 规定了此参数是否是必须的, 而 default 给出了填充此参数的默认字符.
+
+这些设置的字符串都被保存在 `github.event.inputs` 对象中. 通过 `${{ github.event.inputs.name-of-var }}` 在 jobs 中引用.
+
+当设置了 workflow_dispatch , 我们可以在action对应页面的右上方找到 run workflow 的选项, 手动触发此工作流.
+![run-manually](image-2.png)
+
+#### 工作流
+工作流对应着 jobs 字段, 也是必选的.
+
+jobs 里可以有多个工作, 所有工作可以**并行**进行, 通过指定工作的**依赖关系**, 可以控制这些工作先后顺序, 进而形成工作流.
+
+jobs 下的每一项都对应一个独立的工作, 其 job_id 就是
