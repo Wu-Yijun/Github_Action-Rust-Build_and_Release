@@ -10,7 +10,7 @@ on:
     branches:
       - test-ffmpeg-lib
 
-name: Build and Release
+# name: Build and Release
 
 jobs:
   build_on_ubunutu:

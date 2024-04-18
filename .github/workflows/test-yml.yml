@@ -1,0 +1,21 @@
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Message to display'
+        required: true
+      name:
+        description: 'Name of the person to greet'
+        required: true
+        default: 'Mona the Octocat'
+      name2:
+        description: 'Name of the person to greet'
+        required: true
+
+
+jobs:
+  echo-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo hello
+        run: echo "Hello, ${{ github.event.inputs.message }}"
