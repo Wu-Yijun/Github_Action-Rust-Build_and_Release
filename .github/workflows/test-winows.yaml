@@ -14,6 +14,9 @@ on: # 定义触发条件
         description: 'Description of this var2'
         required: false # 可选参数, 可以不输入
 
+env: # 定义环境变量
+  HELLO1: world1
+
 jobs: # 定义工作流
   echo-hello: # 工作流名称
     runs-on: ubuntu-latest # 运行环境
@@ -30,7 +33,25 @@ jobs: # 定义工作流
       - name: upload-artifact # 步骤 3 的步骤名称
         # 使用 uses 关键字引用 actions/upload-artifact@v2 动作
         # 这个动作会将 hello2.txt 上传到 GitHub Actions 的 Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with: # 输入参数列表
           name: hello2
           path: hello2.txt
+
+  env-var-example:
+    runs-on: ubuntu-latest
+    # 设置变量
+    env: # 定义环境变量
+      HELLO2: world2
+    steps:
+      - name: Set env var
+        run: |
+          echo "HELLO3=world3" >> $GITHUB_ENV
+          echo "HELLO4=world4" >> $GITHUB_ENV
+      - name: Echo env var
+        run: |
+          echo $HELLO1
+          echo $HELLO2
+          echo $HELLO3
+          echo $HELLO4
+    
