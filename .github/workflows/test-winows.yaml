@@ -108,19 +108,20 @@ jobs: # 定义工作流
   #         echo ${{ needs.env-var-example.outputs.HELLO9 }}
   #         echo ${{ needs.env-var-example.outputs.HELLO10 }}
 
-  run-javascript1:
+  run-javascript:
     runs-on: ubuntu-latest
     steps:
+      # 获取代码(这样可以运行储存库中你写的代码)
       - uses: actions/checkout@v4
-      - name: Run JavaScript
-        run: node ./.github/workflows/example/javascript.js
-  run-javascript2:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      # 安装 Node
+      # 其实这一步可以略去, 没什么影响
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: latest
+      # 运行 JS 代码
       - name: Run JavaScript
-        run: npm ./.github/workflows/example/javascript.js
+        run: node ./.github/workflows/example/javascript.js
+        env:
+          InputKey1: value1
+          InputKey2: value2

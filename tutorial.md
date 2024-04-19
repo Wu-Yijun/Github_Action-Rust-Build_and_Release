@@ -498,16 +498,18 @@ jobs:
 
 .github/workflows/example/javascript.js
 ```javascript
-// javascript.js
+// Read file
 let fs = require('fs');
 let content = fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
+process.stdout.write(content);
+
+// Test console.out
 console.log('log: Hello World');
 console.info('info: Hello World');
 console.warn('warn: Hello World');
 console.error('error: Hello World');
 
-process.stdout.write(content);
-
+// Get input params
 
 ```
