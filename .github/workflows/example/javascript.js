@@ -3,7 +3,7 @@ let fs = require('fs');
 let content =
     fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
-process.stdout.write(content);
+process.stdout.write(content.substring(0, 200) + '...');
 
 // Test console.out
 console.log('log: Hello World');
@@ -22,7 +22,9 @@ const arg2 = process.argv[3];
 console.log('args: ' + process.argv);
 
 // Set output params
-const core = require('@actions/core');
+// const core = require('@actions/core');
 console.log('::set-output name=output1::' + env1 + arg1);
-core.setOutput('output2', env2 + arg2);
+// core.setOutput('output2', env2 + arg2);
+process.env.MY_VARIABLE = "This is my variable";
+
 // console log:

@@ -466,7 +466,7 @@ jobs:
 
 ### Javascript 脚本, 启动!
 
-用 shell 脚本直接运行 node 即可.
+最简单直白的方法就是用 shell 脚本直接运行 node 即可.
 
 *.github/workflows/example-javascript.yaml*
 ```YAML
@@ -496,7 +496,7 @@ jobs:
 
 ```
 
-.github/workflows/example/javascript.js
+*.github/workflows/example/javascript.js*
 ```javascript
 // Read file
 let fs = require('fs');
