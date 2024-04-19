@@ -1,7 +1,6 @@
 // Read file
-const {exec, execSync} = require('child_process');
-let fs = require('fs');
-let content =
+const fs = require('fs');
+const content =
     fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
 process.stdout.write(content.substring(0, 200) + '...\n');
@@ -13,6 +12,7 @@ console.warn('warn: Hello World 3');
 console.error('error: Hello World 4');
 
 // Run shell command
+const {execSync} = require('child_process');
 execSync('echo "shell: Hello World 5"');
 const content2 =
     execSync('cat .github/workflows/example/javascript.js').toString();

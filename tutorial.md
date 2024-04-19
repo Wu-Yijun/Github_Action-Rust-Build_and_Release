@@ -473,7 +473,7 @@ echo "{name}={value}" >> $GITHUB_OUTPUT
 
 ### Javascript 脚本, 启动!
 
-最简单直白的方法就是用 shell 脚本直接运行 node 即可.
+最简单直白的方法就是用 shell 脚本直接 node 启动 JavaScript 即可.
 
 *.github/workflows/example-javascript.yaml*
 ```YAML
@@ -483,7 +483,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-javascript1:
+  run-javascript:
     runs-on: ubuntu-latest
     steps:
       # 获取代码(这样可以运行储存库中你写的代码)
@@ -496,27 +496,40 @@ jobs:
           node-version: latest
       # 运行 JS 代码
       - name: Run JavaScript
-        run: node ./.github/workflows/example/javascript.js
-        input:
-          key1: value1
-          key2: value2
+        id: Run-JavaScript
+        run: node ./.github/workflows/example/javascript.js arg1_value arg2_value
+        env:
+          Env1: value1
+          Env2: value2
+      # 打印输出
+      - name: Echo output of js
+        run: |
+          echo ${{ steps.Run-JavaScript.outputs.output1 }}
+          echo ${{ steps.Run-JavaScript.outputs.output2 }}
 
 ```
 
 *.github/workflows/example/javascript.js*
 ```javascript
 // Read file
-let fs = require('fs');
-let content =
+const fs = require('fs');
+const content =
     fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
-process.stdout.write(content.substring(0, 200) + '...');
+process.stdout.write(content.substring(0, 200) + '...\n');
 
 // Test console.out
-console.log('log: Hello World');
-console.info('info: Hello World');
-console.warn('warn: Hello World');
-console.error('error: Hello World');
+console.log('log: Hello World 1');
+console.info('info: Hello World 2');
+console.warn('warn: Hello World 3');
+console.error('error: Hello World 4');
+
+// Run shell command
+const {execSync} = require('child_process');
+execSync('echo "shell: Hello World 5"');
+const content2 =
+    execSync('cat .github/workflows/example/javascript.js').toString();
+console.log(content2 === content ? 'Same content' : 'Different content');
 
 // Get input params;
 const env1 = process.env.Env1;
@@ -532,10 +545,10 @@ console.log('args: ' + process.argv);
 console.log('::set-output name=output1::' + env1 + arg1);
 fs.writeFileSync(process.env.GITHUB_OUTPUT, 'output2=' + env2 + arg2);
 
-// run shell
-
 // console log:
 
 ```
 
 javascript
+
+![run-javascript](image-13.png)
