@@ -121,7 +121,13 @@ jobs: # 定义工作流
           node-version: latest
       # 运行 JS 代码
       - name: Run JavaScript
-        run: node ./.github/workflows/example/javascript.js
+        id: Run-JavaScript
+        run: node ./.github/workflows/example/javascript.js arg1_value arg2_value
         env:
-          InputKey1: value1
-          InputKey2: value2
+          Env1: value1
+          Env2: value2
+      # 打印输出
+      - name: Echo output of js
+        run: |
+          echo ${{ steps.Run-JavaScript.outputs.output1 }}
+          echo ${{ steps.Run-JavaScript.outputs.output2 }}

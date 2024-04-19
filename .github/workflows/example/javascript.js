@@ -11,18 +11,18 @@ console.info('info: Hello World');
 console.warn('warn: Hello World');
 console.error('error: Hello World');
 
-// Get input params
-// const core = require('@actions/core');
-// const name = core.getInput('name');
-// console.log('input: ', name);
+// Get input params;
+const env1 = process.env.Env1;
+const env2 = process.env.Env2;
+console.log('input1: ' + env1);
+console.log('input2: ' + env2);
 
-console.log('input: ', process.env.InputKey1);
-console.log('input: ', process.env.InputKey2);
-console.log('input: ', process.env.INPUT_NAME);
+const arg1 = process.argv[2];
+const arg2 = process.argv[3];
+console.log('args: ' + process.argv);
 
 // Set output params
-console.log(
-    '::set-output name=JAVASCRIPT_OUT::$' + process.env.InputKey1 +
-    process.env.InputKey2);
-
+const core = require('@actions/core');
+console.log('::set-output name=output1::' + env1 + arg1);
+core.setOutput('output2', env2 + arg2);
 // console log:
