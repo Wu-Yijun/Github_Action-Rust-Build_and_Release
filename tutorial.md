@@ -26,16 +26,21 @@
   - [Javascript 脚本](#镇楼)
   - Python 脚本
 - 进阶 - 外部 Action 的使用
-  - 上传文件到 workflow: actions/upload-artifact@v4 [(hyperlink)](https://github.com/actions/upload-artifact)
-  - 使用仓库的文件和代码: actions/checkout@v4[(hyperlink)](https://github.com/actions/checkout)
+  - 上传文件到 workflow: actions/upload-artifact@v4 [(repo hyperlink)](https://github.com/actions/upload-artifact)
+  - 使用仓库的文件和代码: actions/checkout@v4 [(repo hyperlink)](https://github.com/actions/checkout)
   - 创建和发布 release
 - 进阶 - Github REST API
 - 高级 - 更多技巧
   - Matrix 矩阵, 复用代码
+- 高级 - 奇技淫巧
 - 高级 - 实例分析
   - rust 项目的构建测试 和 Release 的发布更新
 - 高级 - 写自己的库, 用的人多了, 就可以删库跑路了
   - 将示例集成为库, 一键调用
+
+
+有些内容我还没写完, 也有些部分写的不全面, 还有些内容我没涉及到, 如果你有相关经验/经历, 不妨写一点自己的东西回复到后面, 我看见了也会给它放到目录里. 这样也显得我抛出去的砖没有沉入海底, 而能泛起一些波澜, 甚至引出几块美玉.
+
 ---
 
 ## Github Action 能干什么
@@ -345,7 +350,7 @@ jobs:
       # 环境变量 HELLO1 与 world9 拼接而成
       HELLO9: "hello $HELLO1"
       # set-output 步骤的 HELLO5 输出 与 world10 拼接而成
-      HELLO10: ${{ steps.set-output.outputs.HELLO5 }} $HELLO5 $HELLO6
+      HELLO10: ${{ steps.set-output.outputs.HELLO5 }}
     steps:
       # 设置环境变量
       - name: Set env var
@@ -401,4 +406,64 @@ jobs:
           echo ${{ needs.env-var-example.outputs.HELLO10 }}
 ```
 
+**观察一下第一个的输出结果:**
+
+可用看到运行时将全局变量/工作环境变量/上一步设置的环境变量/单步环境变量全都被打包作为执行此脚本的的环境变量
+![env-var1](image-7.png)
+
+而使用 `${{NAME}}` 获取的环境变量被直接替换为对应的字符, 然后才运行的命令
+![env-output](image-8.png)
+
+可用用 `${{ github.* }}` 获取到的GitHub环境变量很多, 如下所示
+![github-env](image-9.png)
+
+获取GitHub环境变量, 打印token, 可用注意到打印出来的 token 被 * 遮盖了, 这是出于安全性考虑
+![context-env](image-10.png)
+
+**再看第二个的输出结果**
+
+第二个工作是在 macos 上运行的, 但这不影响它调用全局的环境变量, 以及第一个工作的输出结果.
+注意到, 第三个命令中的 $HELLO1 没有被替换, 这说明在第一个工作设置 `OUTPUT3 = "hello $HELLO1"` 时 $HELLO1 没有被代入, 而是作为字符串保留了.
+![needs-env](image-11.png)
+
+最后在看一下 Summary, 这两个有依赖关系的工作被分成了两个块,并连到了一起.
+![workflow](image-12.png)
+
+*疑问: 环境变量的范围和生命周期是什么样的, 同名环境变量是采取替换还是遮蔽的策略呢?*
+
+## 使用仓库的文件和代码
+
+如果你在网上找任何一个写好的 Action 文件, 它的第一步多半都是 check out , 而且 98% 的人都不会在这里加任何注释. 你看了半天也没想明白这是干什么的, 但是你知道了, 每一个 Action 都要在第一步干这个, 就像 C 的main函数要 `return 0;` 一样, 反正不要钱, 多少写一点.
+
+```YAML
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # ...
+```
+
+但如果你细心的话, 你又会注意到, 我前面的几个示例都没有用这个 checkout, 但是代码却可以正常运行, 说明这似乎不是必须品.
+
+事实上, 这是一个非常有用的步骤, 它的储存库的解释为
+
+> This action checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+
+也就是说, 它把你的最新的代码下载到了根目录下, 这样你可用直接访问你的库里的文件.
+如果不设置这一步, 也可能没什么影响, 只要你不需要访问你仓库里的代码, 你完全可以不加!
+
+然而, 这一步虽然重要, 但它不是必要的, 而且又太寻常了, 懂的人不用解释, 不懂的人也不需要解释, 放他过去也无大碍. 
+*谁会给 main 函数的最后一个 `return 0;` 加一行注释呢?*
+
+这个库有 `v1` , `v2` , `v3` , `v4` 版本, 其实使用最新版 `v4` 就可以. 我怀疑这个跟保持稳定性有关, 当库出现大的变更时, 为保证其它使用这个库的代码不会受到影响, 更新会在最新的版本, 这样可以保证使用旧的库的代码不会失效. 
+
 ## 运行 JavaScript 脚本
+
+大多情况下, Shell 脚本或者 Github Action 是很不方便的, 它没有一个逻辑化的体系, 就只是一种标记 (~~虽然 YAML Ain't a Markup Language~~, 但我觉得它就是).
+最麻烦的是, 编辑器的语法检查难以作用到这样的标记语言上, 而我们测试必须在 GitHub 服务器环境, 改一个标点都需要上传 GitHub , 然后等待它从头运行, 这样对编译太不友好了(~~因此我们建议程序员们买一个容量很小的杯子, 每次提交后就出门去直饮水机接水喝, 等回来了差不多就跑完了~~)
+而且对我而言, Shell 语言的熟练度不高, 错误率很高, 然而又没法在控制台直接调试, 因此超级浪费时间.
+
+这个时候其它语言的优势就体现出来了. Javascript 就是一个易于使用的, 错误率较低的, 可以快速运行无需编译的脚本语言. 我们将一些复杂的操作用 js 代码完成, 既可以减少 YAML 文件的冗余, 也可以加快开发效率.
+
+### Javascript 脚本, 启动!
+
+```YAML
