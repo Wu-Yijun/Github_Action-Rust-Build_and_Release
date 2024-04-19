@@ -458,12 +458,56 @@ jobs:
 
 ## 运行 JavaScript 脚本
 
-大多情况下, Shell 脚本或者 Github Action 是很不方便的, 它没有一个逻辑化的体系, 就只是一种标记 (~~虽然 YAML Ain't a Markup Language~~, 但我觉得它就是).
+大多情况下, Shell 脚本或者 Github Action 是很不方便的, 它没有一个逻辑化的体系, 就只是一种标记 (~~虽然 YAML Ain't a Markup Language~~, 但我说它是它就是).
 最麻烦的是, 编辑器的语法检查难以作用到这样的标记语言上, 而我们测试必须在 GitHub 服务器环境, 改一个标点都需要上传 GitHub , 然后等待它从头运行, 这样对编译太不友好了(~~因此我们建议程序员们买一个容量很小的杯子, 每次提交后就出门去直饮水机接水喝, 等回来了差不多就跑完了~~)
-而且对我而言, Shell 语言的熟练度不高, 错误率很高, 然而又没法在控制台直接调试, 因此超级浪费时间.
+而且对我自己而言, Shell 语言的熟练度不高, 错误率很高, 然而又没法在控制台直接调试, 因此超级浪费时间.
 
 这个时候其它语言的优势就体现出来了. Javascript 就是一个易于使用的, 错误率较低的, 可以快速运行无需编译的脚本语言. 我们将一些复杂的操作用 js 代码完成, 既可以减少 YAML 文件的冗余, 也可以加快开发效率.
 
 ### Javascript 脚本, 启动!
 
+用 shell 脚本直接运行 node 即可.
+
+*.github/workflows/example-javascript.yaml*
 ```YAML
+name: Example - Run Javascript
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-javascript1:
+    runs-on: ubuntu-latest
+    steps:
+      # 获取代码(这样可以运行储存库中你写的代码)
+      - uses: actions/checkout@v4
+      # 安装 Node
+      # 其实这一步可以略去, 没什么影响
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      # 运行 JS 代码
+      - name: Run JavaScript
+        run: node ./.github/workflows/example/javascript.js
+        input:
+          key1: value1
+          key2: value2
+
+```
+
+.github/workflows/example/javascript.js
+```javascript
+// javascript.js
+let fs = require('fs');
+let content = fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
+
+console.log('log: Hello World');
+console.info('info: Hello World');
+console.warn('warn: Hello World');
+console.error('error: Hello World');
+
+process.stdout.write(content);
+
+
+```
