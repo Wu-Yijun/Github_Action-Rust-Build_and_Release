@@ -532,7 +532,10 @@ console.log('args: ' + process.argv);
 console.log('::set-output name=output1::' + env1 + arg1);
 fs.writeFileSync(process.env.GITHUB_OUTPUT, 'output2=' + env2 + arg2);
 
+// run shell
+
 // console log:
 
-
 ```
+
+javascript

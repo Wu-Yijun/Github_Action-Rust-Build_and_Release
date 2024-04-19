@@ -1,4 +1,5 @@
 // Read file
+const { exec, execSync } = require('child_process');
 let fs = require('fs');
 let content =
     fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
@@ -6,10 +7,15 @@ let content =
 process.stdout.write(content.substring(0, 200) + '...');
 
 // Test console.out
-console.log('log: Hello World');
-console.info('info: Hello World');
-console.warn('warn: Hello World');
-console.error('error: Hello World');
+console.log('log: Hello World 1');
+console.info('info: Hello World 2');
+console.warn('warn: Hello World 3');
+console.error('error: Hello World 4');
+
+// Run shell command
+execSync('echo "shell: Hello World 5"');
+const content2 = execSync('type .github/workflows/example/javascript.js').toString();
+console.log(content2);
 
 // Get input params;
 const env1 = process.env.Env1;
