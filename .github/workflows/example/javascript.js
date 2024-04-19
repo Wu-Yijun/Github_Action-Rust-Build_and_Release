@@ -14,7 +14,7 @@ console.error('error: Hello World 4');
 
 // Run shell command
 execSync('echo "shell: Hello World 5"');
-const content2 = execSync('type .github/workflows/example/javascript.js').toString();
+const content2 = execSync('cat .github/workflows/example/javascript.js').toString();
 console.log(content2);
 
 // Get input params;
