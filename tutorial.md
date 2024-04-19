@@ -373,7 +373,7 @@ jobs:
         run: |
           HELLO5=world5
           echo "::set-output name=HELLO5::$HELLO5"
-          echo "::set-output name=HELLO6::world6"
+          echo "HELLO6=world6" >> $GITHUB_OUTPUT
       # 使用单步输出
       - name: use-output
         run: |
@@ -413,6 +413,13 @@ jobs:
 
 而使用 `${{NAME}}` 获取的环境变量被直接替换为对应的字符, 然后才运行的命令
 ![env-output](image-8.png)
+
+设置单步输出有两种方式, 前者是已弃用的方法, 你会发现它弹出了警告, 后面的方法是推荐的方法, 它们都会将变量的值保持入此步骤的输出中, 后续步骤可通过 `${{ steps.{step_id}.outputs.{name} }}` 获取这些输出.
+```Shell
+echo "::set-output name={name}::{value}"
+echo "{name}={value}" >> $GITHUB_OUTPUT
+```
+
 
 可用用 `${{ github.* }}` 获取到的GitHub环境变量很多, 如下所示
 ![github-env](image-9.png)
@@ -500,9 +507,10 @@ jobs:
 ```javascript
 // Read file
 let fs = require('fs');
-let content = fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
+let content =
+    fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
-process.stdout.write(content);
+process.stdout.write(content.substring(0, 200) + '...');
 
 // Test console.out
 console.log('log: Hello World');
@@ -510,6 +518,21 @@ console.info('info: Hello World');
 console.warn('warn: Hello World');
 console.error('error: Hello World');
 
-// Get input params
+// Get input params;
+const env1 = process.env.Env1;
+const env2 = process.env.Env2;
+console.log('input1: ' + env1);
+console.log('input2: ' + env2);
+
+const arg1 = process.argv[2];
+const arg2 = process.argv[3];
+console.log('args: ' + process.argv);
+
+// Set output params
+console.log('::set-output name=output1::' + env1 + arg1);
+fs.writeFileSync(process.env.GITHUB_OUTPUT, 'output2=' + env2 + arg2);
+
+// console log:
+
 
 ```
