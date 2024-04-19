@@ -23,6 +23,7 @@ console.log('args: ' + process.argv);
 
 // Set output params
 console.log('::set-output name=output1::' + env1 + arg1);
-console.log(`"output2=${env2+arg2}" >> $GITHUB_OUTPUT`);
+console.log(`echo "output2=${env2 + arg2}" >> $GITHUB_OUTPUT`);
+fs.writeFileSync(process.env.GITHUB_OUTPUT, 'output2=' + env2 + arg2);
 
 // console log:
