@@ -130,5 +130,4 @@ jobs: # 定义工作流
       - name: Echo output of js
         run: |
           echo ${{ steps.Run-JavaScript.outputs.output1 }}
-          echo ${{ env.MY_VARIABLE }}
           echo ${{ steps.Run-JavaScript.outputs.output2 }}
