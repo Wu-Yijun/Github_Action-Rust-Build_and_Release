@@ -4,7 +4,7 @@ let fs = require('fs');
 let content =
     fs.readFileSync('.github/workflows/example/javascript.js', 'utf8');
 
-process.stdout.write(content.substring(0, 200) + '...');
+process.stdout.write(content.substring(0, 200) + '...\n');
 
 // Test console.out
 console.log('log: Hello World 1');
