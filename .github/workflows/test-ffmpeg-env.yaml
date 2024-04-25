@@ -80,7 +80,7 @@ jobs:
       - name: Install dependencies
         run: |
           choco install vcpkg
-          vcpkg install ffmpeg:x64-windows pkgconf:x64-windows clang:x64-windows 
+          vcpkg install ffmpeg:x64-windows pkgconf:x64-windows
 
           
         # choco install clang

@@ -11,14 +11,8 @@ edition = "2021"
 [dependencies]
 libloading = "*"
 
-ffmpeg-next = { version = "*", features = [
-  "format",
-  "codec",
-  "software-resampling",
-  "software-scaling",
-] }
-ndarray = "*"
 video-rs = { version = "*", features = ["ndarray"] }
+ndarray = { version = "*", optional = true }
 
 [[bin]]
 name = "hello-world"
