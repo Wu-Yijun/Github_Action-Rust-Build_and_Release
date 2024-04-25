@@ -6,7 +6,7 @@ use video_rs::encode::{Encoder, Settings};
 use video_rs::time::Time;
 
 fn main() {
-    tracing::tracing_subscriber::fmt::init();
+    // tracing::tracing_subscriber::fmt::init();
     video_rs::init().unwrap();
 
     let settings = Settings::preset_h264_yuv420p(1280, 720, false);
