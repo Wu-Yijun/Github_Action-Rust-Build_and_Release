@@ -79,14 +79,17 @@ jobs:
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
-          $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
-          Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
-          Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
-          7z x ffmpeg-release-full-shared.7z
-          mkdir ffmpeg
-          mv ffmpeg-*/* ffmpeg/
-          Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
-          Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
+          vcpkg install --triplet x64-windows clang curl pkg-config
+          vcpkg install --triplet x64-windows libavcodec libavutil libavformat libavfilter libavdevice
+
+        # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
+        # Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
+        # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
+        # 7z x ffmpeg-release-full-shared.7z
+        # mkdir ffmpeg
+        # mv ffmpeg-*/* ffmpeg/
+        # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
+        # Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
       # - name: Install rust toolchain
       #   uses: dtolnay/rust-toolchain@main
       - name: Set up Rust
