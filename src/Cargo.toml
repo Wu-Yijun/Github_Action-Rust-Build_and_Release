@@ -4,9 +4,8 @@ edition = "2021"
 
 
 [dependencies]
-tracing = "0.1"
 ndarray = "*"
-video-rs = { version = "0.7", features = ["ndarray"] }
+video-rs = { version = "*", features = ["ndarray"] }
 
 
 [[bin]]

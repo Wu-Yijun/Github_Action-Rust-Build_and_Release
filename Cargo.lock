@@ -445,7 +445,6 @@ name = "video-rs"
 version = "0.0.0"
 dependencies = [
  "ndarray",
- "tracing",
  "video-rs 0.7.3",
 ]
 

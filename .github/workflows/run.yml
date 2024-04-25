@@ -41,17 +41,10 @@ jobs:
       - name: Run
         run: |
           cargo run --release
-          ./target/release/video-rs.exe
       # upload artifacts
-      - name: Upload artifacts
-        uses: actions/upload-artifact@main
-        with:
-          name: rainbow.mp4
-          path: target/release/rainbow.mp4
-    
       - name: Upload artifacts2
         uses: actions/upload-artifact@main
         with:
-          name: rainbow2.mp4
+          name: rainbow
           path: rainbow.mp4
       
