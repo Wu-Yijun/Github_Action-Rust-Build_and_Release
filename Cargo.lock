@@ -442,7 +442,17 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
 
 [[package]]
 name = "video-rs"
+version = "0.0.0"
+dependencies = [
+ "tracing",
+ "video-rs 0.7.3",
+]
+
+[[package]]
+name = "video-rs"
 version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e2f150a55fd3ba5550a5bd2db737cc33aa8eb0c31af8d14d67c678299e787cb"
 dependencies = [
  "ffmpeg-next",
  "ndarray",
