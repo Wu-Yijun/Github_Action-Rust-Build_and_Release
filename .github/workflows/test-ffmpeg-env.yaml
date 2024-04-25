@@ -84,7 +84,9 @@ jobs:
           choco install pkg-config
           choco install ffmpeg
 
-          vcpkg integrate install
+          vcpkg install pkg-config
+          vcpkg install ffmpeg
+          vcpkg install clang
 
         #  curl:x64-windows 
         
