@@ -1,19 +1,22 @@
-# [workspace]
-# members = ["hello-world", "library-test"]
-
-# resolver = "2"
-
 [package]
-name = "hello-world"
-version = "0.1.0"
+name = "video-rs"
+description = "High-level video toolkit based on ffmpeg."
+keywords = ["video", "ffmpeg", "encoding", "decoding", "muxing"]
+categories = ["multimedia", "multimedia::video"]
+version = "0.7.3"
+authors = ["Oddity.ai Developers <hello@oddity.ai>"]
+license = "MIT OR Apache-2.0"
 edition = "2021"
+repository = "https://github.com/oddity-ai/video-rs"
+readme = "README.md"
 
 [dependencies]
-libloading = "*"
-
-video-rs = { version = "*", features = ["ndarray"] }
-ndarray = { version = "*", optional = true }
-
-[[bin]]
-name = "hello-world"
-path = "hello-world/src/main.rs"
+tracing = "0.1"
+ffmpeg-next = { version = "7.0", features = [
+    "format",
+    "codec",
+    "software-resampling",
+    "software-scaling",
+] }
+url = "2"
+ndarray = { version = "0.15", optional = true }
