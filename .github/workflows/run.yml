@@ -36,4 +36,9 @@ jobs:
           toolchain: stable
     
       - name: Build
-        run: cargo build
+        run: cargo build --release
+
+      - name: Run
+        run: |
+          cargo run --release
+          ./target/release/video-rs.exe
