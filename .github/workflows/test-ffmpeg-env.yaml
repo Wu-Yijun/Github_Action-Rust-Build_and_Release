@@ -79,6 +79,7 @@ jobs:
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
+          choco install vcpkg
           choco install clang
           choco install pkg-config
           choco install ffmpeg
