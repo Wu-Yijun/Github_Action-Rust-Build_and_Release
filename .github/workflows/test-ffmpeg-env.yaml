@@ -73,7 +73,8 @@ jobs:
   build_on_windows:
     runs-on: windows-latest
     env:
-      FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+      # FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+      FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
     steps:
       - uses: actions/checkout@main
       # Set up ffmpeg environment
@@ -90,8 +91,8 @@ jobs:
         
         # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
         # Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
-        # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
-        # 7z x ffmpeg-release-full-shared.7z
+        # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full.7z
+        # 7z x ffmpeg-release-full.7z
         # mkdir ffmpeg
         # mv ffmpeg-*/* ffmpeg/
         # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
