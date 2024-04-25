@@ -75,7 +75,7 @@ jobs:
     env:
       FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@main
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
@@ -87,14 +87,10 @@ jobs:
           mv ffmpeg-*/* ffmpeg/
           Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
           Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
+      # - name: Install rust toolchain
+      #   uses: dtolnay/rust-toolchain@main
       - name: Set up Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+        uses: actions-rs/toolchain@master
       # Build the project
       - name: Build Project
         run: cargo build --release
