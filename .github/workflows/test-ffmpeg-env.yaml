@@ -81,11 +81,7 @@ jobs:
         run: |
           choco install clang
           choco install pkg-config
-          choco install libavcodec
-          choco install libavutil
-          choco install libavformat
-          choco install libavfilter
-          choco install libavdevice
+          choco install ffmpeg
 
         #  curl:x64-windows 
         
