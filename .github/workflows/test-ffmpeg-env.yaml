@@ -79,9 +79,16 @@ jobs:
       # Set up ffmpeg environment
       - name: Install dependencies
         run: |
-          vcpkg install --triplet x64-windows clang curl pkg-config
-          vcpkg install --triplet x64-windows libavcodec libavutil libavformat libavfilter libavdevice
+          vcpkg install clang:x64-windows
+          vcpkg install pkg-config:x64-windows
+          vcpkg install libavcodec:x64-windows
+          vcpkg install libavutil:x64-windows
+          vcpkg install libavformat:x64-windows
+          vcpkg install libavfilter:x64-windows
+          vcpkg install libavdevice:x64-windows
 
+        #  curl:x64-windows 
+        
         # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
         # Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
         # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
@@ -91,7 +98,7 @@ jobs:
         # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
         # Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
       - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
       - name: Set up Rust
         uses: actions-rs/toolchain@master
         with: 
