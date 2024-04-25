@@ -84,6 +84,8 @@ jobs:
           choco install pkg-config
           choco install ffmpeg
 
+          vcpkg integrate install
+
         #  curl:x64-windows 
         
         # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
