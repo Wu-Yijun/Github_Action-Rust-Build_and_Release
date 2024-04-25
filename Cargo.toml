@@ -1,13 +1,4 @@
-[package]
-name = "video-rs"
-edition = "2021"
-
-[dependencies]
-tracing = "0.1"
-tracing-subscriber = "0.3"
-ndarray = "*"
-video-rs = { version = "0.7", features = ["ndarray"] }
-
-
-[[bin]]
-name = "video-rs"
+[workspace]
+members = [
+    "src",
+]
