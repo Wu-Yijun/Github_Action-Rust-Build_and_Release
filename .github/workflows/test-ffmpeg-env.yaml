@@ -70,43 +70,43 @@ jobs:
   #         name: hello_ubuntu-output-report
   #         path: ./target/release/hello-ubuntu.zip
 
-  build_on_windows:
-    runs-on: windows-latest
-    env:
-      # FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
-      FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
-    steps:
-      - uses: actions/checkout@main
-      # Set up ffmpeg environment
-      - name: Install dependencies
-        run: |
-          choco install vcpkg
-          vcpkg install ffmpeg:x64-windows pkgconf:x64-windows
+  # build_on_windows:
+  #   runs-on: windows-latest
+  #   env:
+  #     # FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+  #     FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
+  #   steps:
+  #     - uses: actions/checkout@main
+  #     # Set up ffmpeg environment
+  #     - name: Install dependencies
+  #       run: |
+  #         choco install vcpkg
+  #         vcpkg install ffmpeg:x64-windows pkgconf:x64-windows
 
           
-        # choco install clang
-        # choco install pkg-config
-        # choco install ffmpeg
-        #  curl:x64-windows 
+  #       # choco install clang
+  #       # choco install pkg-config
+  #       # choco install ffmpeg
+  #       #  curl:x64-windows 
         
-        # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
-        # Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
-        # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full.7z
-        # 7z x ffmpeg-release-full.7z
-        # mkdir ffmpeg
-        # mv ffmpeg-*/* ffmpeg/
-        # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
-        # Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      - name: Set up Rust
-        uses: actions-rs/toolchain@master
-        with: 
-          toolchain: stable
-          override: true
-      # Build the project
-      - name: Build Project
-        run: cargo build --release
+  #       # $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
+  #       # Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
+  #       # Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full.7z
+  #       # 7z x ffmpeg-release-full.7z
+  #       # mkdir ffmpeg
+  #       # mv ffmpeg-*/* ffmpeg/
+  #       # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
+  #       # Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
+  #     - name: Install rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
+  #     - name: Set up Rust
+  #       uses: actions-rs/toolchain@master
+  #       with: 
+  #         toolchain: stable
+  #         override: true
+  #     # Build the project
+  #     - name: Build Project
+  #       run: cargo build --release
       # copy and compress the binary and library into a zip file
       # - name: Copy and Compress Binary
       #   run: |
@@ -146,7 +146,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+      # FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full-shared.7z
+      FFMPEG_DOWNLOAD_URL: https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z
 
     steps:
       - name: Checkout
@@ -156,8 +157,8 @@ jobs:
         run: |
           $VCINSTALLDIR = $(& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath)
           Add-Content $env:GITHUB_ENV "LIBCLANG_PATH=${VCINSTALLDIR}\VC\Tools\LLVM\x64\bin`n"
-          Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full-shared.7z
-          7z x ffmpeg-release-full-shared.7z
+          Invoke-WebRequest "${env:FFMPEG_DOWNLOAD_URL}" -OutFile ffmpeg-release-full.7z
+          7z x ffmpeg-release-full.7z
           mkdir ffmpeg
           mv ffmpeg-*/* ffmpeg/
           Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
