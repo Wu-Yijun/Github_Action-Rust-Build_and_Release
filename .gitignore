@@ -1,2 +1,4 @@
 /target
 /github-action-files
+
+Cargo.lock

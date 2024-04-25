@@ -12,11 +12,11 @@ pub fn main() {
     let mut encoder =
         Encoder::new(Path::new("rainbow.mp4"), settings).expect("failed to create encoder");
 
-    let duration: Time = Time::from_nth_of_a_second(12);
+    let duration: Time = Time::from_nth_of_a_second(24);
     let mut position = Time::zero();
-    for i in 0..100 {
+    for i in 0..256 {
         // This will create a smooth rainbow animation video!
-        let frame = rainbow_frame(i as f32 / 100.0);
+        let frame = rainbow_frame(i as f32 / 256.0);
 
         encoder
             .encode(&frame, &position)
