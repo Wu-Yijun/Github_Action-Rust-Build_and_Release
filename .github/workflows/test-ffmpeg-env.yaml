@@ -6,9 +6,9 @@ on:
         description: 'Name of the person to greet'
         required: true
         default: 'Mona the Octocat'
-  # push:
-  #   branches:
-  #     - test-ffmpeg-lib
+  push:
+    branches:
+      - test-ffmpeg-lib
 
 # name: Build and Release
 
@@ -97,36 +97,36 @@ jobs:
           toolchain: stable
       # Build the project
       - name: Build Project
-        run: cargo build
+        run: cargo build --release
       # copy and compress the binary and library into a zip file
-      - name: Copy and Compress Binary
-        run: |
-          cd ./target/release
-          mkdir -p hello_windows/libs
-          cp hello-world.exe hello_windows/
-          cp *.dll hello_windows/libs/
-          cd ..
-          cd ..
-      # Test the Rust program
-      - name: Run Rust program
-        run: |
-          ./hello-world.exe
-          $exit_code = $LASTEXITCODE
-          if ($exit_code -ne 0) {
-            Write-Output "Rust program failed with exit code $exit_code"
-            exit 1
-          }
-          cd ..
-          Compress-Archive -Path "hello_windows" hello-windows.zip
+      # - name: Copy and Compress Binary
+      #   run: |
+      #     cd ./target/release
+      #     mkdir -p hello_windows/libs
+      #     cp hello-world.exe hello_windows/
+      #     cp *.dll hello_windows/libs/
+      #     cd ..
+      #     cd ..
+      # # Test the Rust program
+      # - name: Run Rust program
+      #   run: |
+      #     ./hello-world.exe
+      #     $exit_code = $LASTEXITCODE
+      #     if ($exit_code -ne 0) {
+      #       Write-Output "Rust program failed with exit code $exit_code"
+      #       exit 1
+      #     }
+      #     cd ..
+      #     Compress-Archive -Path "hello_windows" hello-windows.zip
 
-        working-directory: ./target/release/hello_windows
-      # delete the hello_windows directory
-      - name: Delete hello_windows
-        run: |
-          Remove-Item -Path "./target/release/hello_windows" -Recurse -Force
-      # then upload the zip to the release
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: hello_windows-output-report
-          path: ./target/release/hello_windows.zip
+      #   working-directory: ./target/release/hello_windows
+      # # delete the hello_windows directory
+      # - name: Delete hello_windows
+      #   run: |
+      #     Remove-Item -Path "./target/release/hello_windows" -Recurse -Force
+      # # then upload the zip to the release
+      # - name: Archive code coverage results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: hello_windows-output-report
+      #     path: ./target/release/hello_windows.zip

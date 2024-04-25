@@ -23,12 +23,12 @@
   - [设置和使用环境变量, 在步骤间传递参数, 在工作间传递参数](#环境参数的定义,-使用,-与传递)
   - 在工作间传递文件
 - 进阶 - 运行其它格式的脚本
-  - [Javascript 脚本](#镇楼)
+  - [Javascript 脚本](#运行-javascript-脚本)
   - Python 脚本
 - 进阶 - 外部 Action 的使用
   - 上传文件到 workflow: actions/upload-artifact@v4 [(repo hyperlink)](https://github.com/actions/upload-artifact)
   - 使用仓库的文件和代码: actions/checkout@v4 [(repo hyperlink)](https://github.com/actions/checkout)
-  - 创建和发布 release
+  - 创建和发布 release: actions/create-release@v1 [(repo hyperlink)](https://github.com/actions/create-release), actions/upload-release-asset@v1 [(repo hyperlink)](https://github.com/actions/upload-release-asset)
 - 进阶 - Github REST API
 - 高级 - 更多技巧
   - Matrix 矩阵, 复用代码
@@ -549,6 +549,23 @@ fs.writeFileSync(process.env.GITHUB_OUTPUT, 'output2=' + env2 + arg2);
 
 ```
 
-javascript
+上面的 js 展示了几个非常常用的 node js 技巧,  
+- 首先, 是读文件, 我们需要 require('fs') 库. 然后直接同步读取文件内容即可.
+- 其次是输出到控制台, 通常情况下, log/info/warn/error 不会有多大的区别, 如果你发现 console.log 的输出没有打印出来, 可以试试 console.warn 等.
+- 接着, 是执行 shell 脚本. 有些时候我们需要从 shell 脚本的输出结果中获取信息, 我们在执行后将返回值 toString 即可获得输出内容. 比较的结果显示 output2 保存的正是 content1 同样的文本.
+- 然后, 从输入参数, 环境变量中获取信息. Javascript 毕竟是为了简化 shell 脚本, 将一些信息提前并转化为其它信息. 输入参数与环境变量分别存储在 `process.argv` 和 `process.env` 中供取用.
+- 最后, 就是返回输出信息. 这里的返回值不是通过 return 的形式返回的, 我们通过向控制台输出 `:set-output name={name}::{value}` 来将 value 保持为单步的输出, 供下一步使用. 然而, 这种方式以及过时了, 更好的办法是 `fs.writeFileSync(process.env.GITHUB_OUTPUT, 'name={name}');` 来完成.
 
-![run-javascript](image-13.png)
+观察我们的 输出结果, 看到, 首先打印了文件的前 200 字, 然后测试了四种输出方式均无异常, 接着执行shell命令获取了文件的字符串, 和直接读取的结果一致. 然后展示了可以获取和保存变量.
+下一步我们打印了两个输出的变量, 证明了保持的成功性.
+
+![javascript-output](image-13.png)
+
+### 更好的执行脚本
+
+我们可以用外部库 [actions/github-script](https://github.com/actions/github-script)
+
+它有一些更高级的功能.
+
+
+我先写到这, 哪天有时间再写.
