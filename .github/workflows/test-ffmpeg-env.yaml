@@ -90,8 +90,8 @@ jobs:
         # mv ffmpeg-*/* ffmpeg/
         # Add-Content $env:GITHUB_ENV "FFMPEG_DIR=${pwd}\ffmpeg`n"
         # Add-Content $env:GITHUB_PATH "${pwd}\ffmpeg\bin`n"
-      # - name: Install rust toolchain
-      #   uses: dtolnay/rust-toolchain@main
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@main
       - name: Set up Rust
         uses: actions-rs/toolchain@master
         with: 
