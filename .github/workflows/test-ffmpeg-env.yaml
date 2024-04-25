@@ -91,6 +91,9 @@ jobs:
       #   uses: dtolnay/rust-toolchain@main
       - name: Set up Rust
         uses: actions-rs/toolchain@master
+        with: 
+          toolchain: stable
+          override: true
       # Build the project
       - name: Build Project
         run: cargo build --release
