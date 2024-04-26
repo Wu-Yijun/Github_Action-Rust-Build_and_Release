@@ -8,4 +8,4 @@ mv ./target/release/*.dll ./target/release/output/libs
 ./target/release/output/hello-world.exe
 
 # Compresse the output folder
-# Compress-Archive -Path ./target/release/output -DestinationPath ./target/release/output.zip
+Compress-Archive -Path ./target/release/output -DestinationPath ./target/release/output.zip
