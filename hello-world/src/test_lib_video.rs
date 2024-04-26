@@ -16,12 +16,14 @@ const LIBRART_PATH: &str = "libgen_video.dylib";
 #[allow(dead_code)]
 const TEST_ERROR_PATH: &str = "libs/libtest_error";
 
-use std::{env, path::Path};
-
 use ndarray::Array3;
+use std::env;
 
 pub fn main() {
-    env::set_current_dir(Path::new("libs")).unwrap();
+    let path_exe = env::current_exe().unwrap();
+    let path = path_exe.ancestors().nth(2).unwrap();
+    println!("Current exe directory: {}", path.display());
+    env::set_current_dir(format!("{}/libs", path.display())).unwrap();
     // print the current working directory
     println!("Video generated on {PLATFORM}!");
     println!(
