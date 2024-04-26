@@ -1,5 +1,5 @@
 [workspace]
-members = ["hello-world"]
+members = [ "gen-video","hello-world"]
 
 resolver = "2"
 

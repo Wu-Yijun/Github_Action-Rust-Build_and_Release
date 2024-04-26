@@ -168,5 +168,11 @@ jobs:
         with:
           toolchain: stable
     
-      - name: Build
-        run: cargo build --release
+      - name: Build and Run
+        run: ./build-run.ps1
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: output.zip
+          path: target/release/output
