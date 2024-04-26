@@ -9,3 +9,6 @@ mv ./target/release/*.dll ./target/release/output/libs
 
 # Compresse the output folder
 Compress-Archive -Path ./target/release/output -DestinationPath ./target/release/output.zip
+
+# delete the output folder
+Remove-Item -Recurse -Force ./target/release/output

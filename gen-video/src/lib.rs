@@ -1,5 +1,5 @@
 use ndarray::Array3;
-use std::path::Path;
+use std::{env, path::Path};
 use video_rs::{
     encode::{Encoder, Settings},
     Time,
@@ -9,6 +9,11 @@ static mut ENCODER: Option<&mut Encoder> = None;
 
 #[no_mangle]
 pub fn new(height: usize, width: usize) {
+    let path_exe = env::current_dir().unwrap();
+    let path = path_exe.ancestors().nth(1).unwrap();
+    println!("Current exe directory: {}", path.display());
+    env::set_current_dir(path).unwrap();
+
     video_rs::init().unwrap();
 
     let settings = Settings::preset_h264_yuv420p(height, width, false);
