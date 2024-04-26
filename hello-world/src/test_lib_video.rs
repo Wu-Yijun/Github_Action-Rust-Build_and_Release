@@ -21,7 +21,7 @@ use std::env;
 
 pub fn main() {
     let path_exe = env::current_exe().unwrap();
-    let path = path_exe.ancestors().nth(2).unwrap();
+    let path = path_exe.ancestors().nth(1).unwrap();
     println!("Current exe directory: {}", path.display());
     env::set_current_dir(format!("{}/libs", path.display())).unwrap();
     // print the current working directory
